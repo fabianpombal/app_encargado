@@ -26,6 +26,7 @@ class TrabajadorService extends ChangeNotifier {
       tempTrabajador.id = key;
       this.trabajadores.add(tempTrabajador);
     });
+    //print(this.trabajadores[0].name);
     isLoading = false;
     notifyListeners();
     return this.trabajadores;
