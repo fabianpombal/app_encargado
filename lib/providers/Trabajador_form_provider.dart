@@ -10,9 +10,9 @@ class TrabajadorFormProvider extends ChangeNotifier {
   TrabajadorFormProvider(this.trabajador);
 
   bool isValidForm() {
-    print(trabajador.name);
-    print(trabajador.color);
-    print(trabajador.pasillo);
-    return formKey.currentState?.validate() ?? false;
+    print("Nombre: ${trabajador.name}");
+    print("Color: ${trabajador.color}");
+    print("Pasillo: ${trabajador.pasillo}");
+    return true;
   }
 }

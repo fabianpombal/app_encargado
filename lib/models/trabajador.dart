@@ -32,4 +32,7 @@ class Trabajador {
         "name": name,
         "pasillo": pasillo,
       };
+
+  Trabajador copy() => Trabajador(
+      color: this.color, name: this.name, pasillo: this.pasillo, id: this.id);
 }

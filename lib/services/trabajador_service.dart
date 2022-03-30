@@ -6,7 +6,9 @@ import 'package:http/http.dart' as http;
 class TrabajadorService extends ChangeNotifier {
   final String _baseUrl =
       'lpro-6c2f9-default-rtdb.europe-west1.firebasedatabase.app';
+
   final List<Trabajador> trabajadores = [];
+  late Trabajador trabajadorSeleccionado;
 
   bool isLoading = true;
   bool isSaving = true;
@@ -16,17 +18,17 @@ class TrabajadorService extends ChangeNotifier {
   }
 
   Future<List<Trabajador>> loadTrabajadores() async {
-    isLoading = true;
     notifyListeners();
-    final url = Uri.https(_baseUrl, 'trabajadores.json');
+    final url = Uri.https(_baseUrl, '/trabajadores.json');
     final res = await http.get(url);
+
     final Map<String, dynamic> trabajadoresMap = json.decode(res.body);
     trabajadoresMap.forEach((key, value) {
       final tempTrabajador = Trabajador.fromMap(value);
       tempTrabajador.id = key;
+      print(tempTrabajador.id);
       this.trabajadores.add(tempTrabajador);
     });
-    //print(this.trabajadores[0].name);
     isLoading = false;
     notifyListeners();
     return this.trabajadores;
@@ -50,7 +52,7 @@ class TrabajadorService extends ChangeNotifier {
     final url = Uri.https(_baseUrl, 'Trabajadores/${trabajador.id}.json');
     final res = await http.put(url, body: trabajador.toJson());
     final decodedData = res.body;
-    print(decodedData);
+    //print(decodedData);
     final index =
         this.trabajadores.indexWhere((element) => element.id == trabajador.id);
     this.trabajadores[index] = trabajador;
