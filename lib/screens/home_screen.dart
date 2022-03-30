@@ -56,7 +56,7 @@ class HomeScreen extends StatelessWidget {
           color: Colors.white,
         ),
         onPressed: () {
-          print(trabajadorService.trabajadores.length);
+          print(trabajadorService.trabajadores);
           Navigator.pushNamed(context, 'formScreen');
         },
         backgroundColor: Colors.indigo,
