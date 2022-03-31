@@ -9,6 +9,7 @@ class PedidosService extends ChangeNotifier {
       'lpro-6c2f9-default-rtdb.europe-west1.firebasedatabase.app';
 
   bool isLoading = true;
+  final List <Pedido> pedidosActivos = [];
 
   final List<Pedido> pedidos = [];
 
@@ -30,4 +31,26 @@ class PedidosService extends ChangeNotifier {
     notifyListeners();
     return this.pedidos;
   }
+
+  Future<List<Pedido>> loadPedidosByWorker(String workerId) async{
+
+    notifyListeners();
+    final url = Uri.https(_baseUrl, '/pedidos.json?orderBy="idTrabajador"&equalTo="${workerId}"');
+    final res = await http.get(url);
+    print(res.body);
+    final Map<String, dynamic> pedidosMap = json.decode(res.body);
+    pedidosMap.forEach((key, value) {
+      final tempPedidos = Pedido.fromMap(value);
+      tempPedidos.id = key;
+      this.pedidosActivos.add(tempPedidos);
+    });
+    isLoading = true;
+    notifyListeners();
+    return this.pedidosActivos;
+
+  }
+
+
+
+
 }

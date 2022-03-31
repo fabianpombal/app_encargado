@@ -6,12 +6,14 @@ class Producto {
       required this.name,
       required this.stock,
       required this.valda,
+      required this.rfidTag,
       this.id});
 
   int estante;
   String name;
   int stock;
   int valda;
+  String rfidTag;
   String? id;
 
   factory Producto.fromJson(String str) => Producto.fromMap(json.decode(str));
@@ -23,6 +25,7 @@ class Producto {
         name: json["name"],
         stock: json["stock"],
         valda: json["valda"],
+        rfidTag: json["rfidTag"]
       );
 
   Map<String, dynamic> toMap() => {
@@ -30,5 +33,6 @@ class Producto {
         "name": name,
         "stock": stock,
         "valda": valda,
+        "rfidTag": rfidTag,
       };
 }

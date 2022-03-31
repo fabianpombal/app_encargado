@@ -33,6 +33,8 @@ class _PantallaPedidos extends StatelessWidget {
     int G = 0;
     int B = 0;
 
+    final List<Pedido> pedidosAux = pedidoServ.loadPedidosByWorker(trabajadorServ.trabajadorSeleccionado.rfidTag);
+
     List<String> colorAux =
         trabajadorServ.trabajadorSeleccionado.color.split(",");
     R = int.parse(colorAux[0]);
@@ -49,11 +51,11 @@ class _PantallaPedidos extends StatelessWidget {
         child: ListView.builder(
           itemBuilder: (BuildContext context, int index) {
             return ProductCard(
-              idPedido: pedidoServ.pedidos[index].idProducto,
-              status: pedidoServ.pedidos[index].estado,
+              idPedido: pedidoServ.pedidosActivos[index].idProducto,
+              status: pedidoServ.pedidosActivos[index].estado,
             );
           },
-          itemCount: pedidoServ.pedidos.length,
+          itemCount: pedidoServ.pedidosActivos.length,
         ),
       ),
       floatingActionButton: FloatingActionButton(
