@@ -16,7 +16,7 @@ class ProductCard extends StatelessWidget {
       decoration: _cardBorders(),
       child: Stack(
         children: [
-          Positioned(top: 15, left: 5, child: Bubble(status: status)),
+          Positioned(top: 15, left: 10, child: Bubble(status: status)),
           Text(idPedido)
         ],
       ),

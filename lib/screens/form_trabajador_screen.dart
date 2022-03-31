@@ -38,101 +38,87 @@ class _FormScreen extends StatelessWidget {
     trabajadorService.trabajadorSeleccionado =
         new Trabajador(color: '', name: '', pasillo: 0, rfidTag: "");
     return Scaffold(
-      body: Stack(
-        children: [
-          Center(
-              child: Form(
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            key: trabajadorForm.formKey,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                        hintText: 'Fulanito de Tal', labelText: 'Nombre'),
-                    onChanged: (value) {
-                      trabajadorForm.trabajador.name = value;
-                    },
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextFormField(
-                    decoration:
-                        InputDecoration(hintText: '1', labelText: 'Pasillo'),
-                    onChanged: (value) {
-                      if (int.tryParse(value) == null) {
-                        return;
-                      } else {
-                        trabajadorForm.trabajador.pasillo = int.parse(value);
-                      }
-                    },
-                    validator: (value) {
-                      if (value == null) {
-                        return "el pasillo es obligatorio";
-                      } else if (int.tryParse(value) == null) {
-                        return "introduce un pasillo valido";
-                      } else if (int.parse(value) == 0) {
-                        return "el pasillo tiene que ser diferente de 0";
-                      }
-                    },
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  BlockPicker(
-                    pickerColor: Colors.red,
-                    onColorChanged: (color) {
-                      print(
-                          "R:${color.red}, G: ${color.green}, B: ${color.blue}");
-                      trabajadorForm.trabajador.color =
-                          "${color.red},${color.green},${color.blue}";
-                      return;
-                    },
-                    availableColors: [
-                      Colors.red,
-                      Colors.green,
-                      Colors.black,
-                      Colors.blue,
-                      Colors.indigo,
-                      Colors.teal
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  MaterialButton(
-                    onPressed: () {
-                      trabajadorService
-                          .saveOrCreateTrabajador(trabajadorForm.trabajador);
-
-                      // print(trabajadorForm.trabajador.color);
-                      Navigator.pop(context);
-                    },
-                    color: Colors.indigo,
-                    child: Text('Enviar'),
-                  )
+      appBar: AppBar(
+        title: Text("Nuevo Trabajador"),
+      ),
+      body: Center(
+          child: Form(
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        key: trabajadorForm.formKey,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 20,
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                    hintText: 'Fulanito de Tal', labelText: 'Nombre'),
+                onChanged: (value) {
+                  trabajadorForm.trabajador.name = value;
+                },
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              TextFormField(
+                decoration:
+                    InputDecoration(hintText: '1', labelText: 'Pasillo'),
+                onChanged: (value) {
+                  if (int.tryParse(value) == null) {
+                    return;
+                  } else {
+                    trabajadorForm.trabajador.pasillo = int.parse(value);
+                  }
+                },
+                validator: (value) {
+                  if (value == null) {
+                    return "el pasillo es obligatorio";
+                  } else if (int.tryParse(value) == null) {
+                    return "introduce un pasillo valido";
+                  } else if (int.parse(value) == 0) {
+                    return "el pasillo tiene que ser diferente de 0";
+                  }
+                },
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              BlockPicker(
+                pickerColor: Colors.red,
+                onColorChanged: (color) {
+                  print("R:${color.red}, G: ${color.green}, B: ${color.blue}");
+                  trabajadorForm.trabajador.color =
+                      "${color.red},${color.green},${color.blue}";
+                  return;
+                },
+                availableColors: [
+                  Colors.red,
+                  Colors.green,
+                  Colors.black,
+                  Colors.blue,
+                  Colors.indigo,
+                  Colors.teal
                 ],
               ),
-            ),
-          )),
-          Positioned(
-            child: IconButton(
+              const SizedBox(
+                height: 20,
+              ),
+              MaterialButton(
                 onPressed: () {
+                  trabajadorService
+                      .saveOrCreateTrabajador(trabajadorForm.trabajador);
+
+                  // print(trabajadorForm.trabajador.color);
                   Navigator.pop(context);
                 },
-                icon: const Icon(
-                  Icons.arrow_back,
-                  color: Colors.black,
-                )),
-            top: 15,
-            left: 19,
-          )
-        ],
-      ),
+                color: Colors.indigo,
+                child: Text('Enviar'),
+              )
+            ],
+          ),
+        ),
+      )),
     );
   }
 }

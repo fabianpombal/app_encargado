@@ -11,7 +11,9 @@ class WorkerScreen extends StatelessWidget {
     final trabajadorServ = Provider.of<TrabajadorService>(context);
     return MultiProvider(providers: [
       ChangeNotifierProvider(create: (context) => ProductService()),
-      ChangeNotifierProvider(create: (context) => PedidosService())
+      ChangeNotifierProvider(
+          create: (context) =>
+              PedidosService(trabajadorServ.trabajadorSeleccionado.rfidTag))
     ], child: _PantallaPedidos(trabajadorServ: trabajadorServ));
   }
 }
@@ -33,7 +35,7 @@ class _PantallaPedidos extends StatelessWidget {
     int G = 0;
     int B = 0;
 
-    final List<Pedido> pedidosAux = pedidoServ.loadPedidosByWorker(trabajadorServ.trabajadorSeleccionado.rfidTag);
+    // final List<Pedido> pedidosAux = pedidoServ.loadPedidosByWorker(trabajadorServ.trabajadorSeleccionado.rfidTag);
 
     List<String> colorAux =
         trabajadorServ.trabajadorSeleccionado.color.split(",");
