@@ -36,6 +36,7 @@ class HomeScreen extends StatelessWidget {
                     child: _CustomContainer(
                       workerName: trabajadorService.trabajadores[index].name,
                       trabajadorService: trabajadorService,
+                      tagRfid: trabajadorService.trabajadores[index].rfidTag,
                     ),
                     onTap: () {
                       trabajadorService.trabajadorSeleccionado =
@@ -59,8 +60,8 @@ class HomeScreen extends StatelessWidget {
           trabajadorService.trabajadores.forEach((element) {
             print(element.id);
           });
-          trabajadorService.trabajadorSeleccionado =
-              new Trabajador(color: '', name: '', pasillo: 0, id: null);
+          trabajadorService.trabajadorSeleccionado = new Trabajador(
+              color: '', name: '', pasillo: 0, id: null, rfidTag: "");
           Navigator.pushNamed(context, 'formScreen');
         },
         backgroundColor: Colors.indigo,
@@ -72,9 +73,13 @@ class HomeScreen extends StatelessWidget {
 
 class _CustomContainer extends StatelessWidget {
   final String workerName;
+  final String tagRfid;
   final trabajadorService;
   const _CustomContainer(
-      {Key? key, required this.workerName, required this.trabajadorService})
+      {Key? key,
+      required this.workerName,
+      required this.trabajadorService,
+      required this.tagRfid})
       : super(key: key);
 
   @override
@@ -84,12 +89,22 @@ class _CustomContainer extends StatelessWidget {
       child: Container(
         width: 40,
         height: 40,
-        child: Center(
-            child: Text(
-          workerName,
-          style: TextStyle(
-              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
-        )),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              workerName,
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15),
+            ),
+            Text(
+              tagRfid,
+              style: TextStyle(color: Colors.white, fontSize: 10),
+            ),
+          ],
+        ),
         decoration: _cardBorders(),
       ),
     );

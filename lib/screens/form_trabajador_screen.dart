@@ -36,7 +36,7 @@ class _FormScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final trabajadorForm = Provider.of<TrabajadorFormProvider>(context);
     trabajadorService.trabajadorSeleccionado =
-        new Trabajador(color: '', name: '', pasillo: 0);
+        new Trabajador(color: '', name: '', pasillo: 0, rfidTag: "");
     return Scaffold(
       body: Stack(
         children: [

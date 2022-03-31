@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/services/producto_service.dart';
-import 'package:frontend/services/trabajador_service.dart';
+import 'package:frontend/services/services.dart';
+import 'package:frontend/widgets/product_card.dart';
 import 'package:provider/provider.dart';
 
 class WorkerScreen extends StatelessWidget {
@@ -10,7 +10,8 @@ class WorkerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final trabajadorServ = Provider.of<TrabajadorService>(context);
     return MultiProvider(providers: [
-      ChangeNotifierProvider(create: (context) => ProductService())
+      ChangeNotifierProvider(create: (context) => ProductService()),
+      ChangeNotifierProvider(create: (context) => PedidosService())
     ], child: _PantallaPedidos(trabajadorServ: trabajadorServ));
   }
 }
@@ -26,6 +27,8 @@ class _PantallaPedidos extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final prodServ = Provider.of<ProductService>(context);
+    final pedidoServ = Provider.of<PedidosService>(context);
+
     int R = 0;
     int G = 0;
     int B = 0;
@@ -45,9 +48,12 @@ class _PantallaPedidos extends StatelessWidget {
       body: Container(
         child: ListView.builder(
           itemBuilder: (BuildContext context, int index) {
-            return Text(prodServ.products[index].name);
+            return ProductCard(
+              idPedido: pedidoServ.pedidos[index].idProducto,
+              status: pedidoServ.pedidos[index].estado,
+            );
           },
-          itemCount: prodServ.products.length,
+          itemCount: pedidoServ.pedidos.length,
         ),
       ),
       floatingActionButton: FloatingActionButton(
