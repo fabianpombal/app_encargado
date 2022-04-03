@@ -12,7 +12,7 @@ class TrabajadorFormProvider extends ChangeNotifier {
   bool isValidForm() {
     print("Nombre: ${trabajador.name}");
     print("Color: ${trabajador.color}");
-    print("Pasillo: ${trabajador.pasillo}");
+
     return true;
   }
 }

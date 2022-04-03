@@ -9,12 +9,18 @@ class WorkerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final trabajadorServ = Provider.of<TrabajadorService>(context);
-    return MultiProvider(providers: [
-      ChangeNotifierProvider(create: (context) => ProductService()),
-      ChangeNotifierProvider(
-          create: (context) =>
-              PedidosService(trabajadorServ.trabajadorSeleccionado.rfidTag))
-    ], child: _PantallaPedidos(trabajadorServ: trabajadorServ));
+    final socketService = Provider.of<SocketService>(context);
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => ProductService()),
+          ChangeNotifierProvider(
+              create: (context) =>
+                  PedidosService(trabajadorServ.trabajadorSeleccionado.rfidTag))
+        ],
+        child: _PantallaPedidos(
+          trabajadorServ: trabajadorServ,
+          socketService: socketService,
+        ));
   }
 }
 
@@ -22,9 +28,11 @@ class _PantallaPedidos extends StatelessWidget {
   const _PantallaPedidos({
     Key? key,
     required this.trabajadorServ,
+    required this.socketService,
   }) : super(key: key);
 
   final TrabajadorService trabajadorServ;
+  final SocketService socketService;
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +71,8 @@ class _PantallaPedidos extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.message),
         onPressed: () {
+          socketService.socket.emit('mensaje-nuevo',
+              {"id": trabajadorServ.trabajadorSeleccionado.id});
           trabajadorServ.trabajadores.forEach((element) {
             print(element.id);
           });

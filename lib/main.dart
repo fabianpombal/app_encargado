@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:frontend/screens/screens.dart';
-import 'package:frontend/services/trabajador_service.dart';
+import 'package:frontend/services/services.dart';
 import 'package:frontend/themes/custom_theme.dart';
 import 'package:provider/provider.dart';
 
@@ -12,7 +12,9 @@ class AppState extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => TrabajadorService())
+        ChangeNotifierProvider(create: (context) => TrabajadorService()),
+        ChangeNotifierProvider(create: (context) => SocketService()),
+        ChangeNotifierProvider(create: (context) => ProductService())
       ],
       child: MyApp(),
     );

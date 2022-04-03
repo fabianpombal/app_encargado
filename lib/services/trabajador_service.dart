@@ -26,7 +26,7 @@ class TrabajadorService extends ChangeNotifier {
     trabajadoresMap.forEach((key, value) {
       final tempTrabajador = Trabajador.fromMap(value);
       tempTrabajador.id = key;
-      print(tempTrabajador.id);
+      // print(tempTrabajador.id);
       this.trabajadores.add(tempTrabajador);
     });
     isLoading = false;

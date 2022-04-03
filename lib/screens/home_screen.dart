@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:frontend/models/models.dart';
 import 'package:frontend/screens/screens.dart';
-import 'package:frontend/services/trabajador_service.dart';
-import 'package:frontend/themes/input_decorations.dart';
+import 'package:frontend/services/services.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -12,7 +10,21 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final trabajadorService = Provider.of<TrabajadorService>(context);
+    final socketService = Provider.of<SocketService>(context);
+    final productService = Provider.of<ProductService>(context);
+
     if (trabajadorService.isLoading) {
+      socketService.socket.emit('mensaje-nuevo', 'mensaje');
+      productService.products.forEach((element) {
+        socketService.socket.emit('add-product', {
+          "name": element.name,
+          "estante": element.estante,
+          "valda": element.valda,
+          "stock": element.stock,
+          "rfidTag": element.rfidTag,
+          "id": element.id
+        });
+      });
       return LoadingScreen();
     }
 
@@ -37,6 +49,8 @@ class HomeScreen extends StatelessWidget {
                       workerName: trabajadorService.trabajadores[index].name,
                       trabajadorService: trabajadorService,
                       tagRfid: trabajadorService.trabajadores[index].rfidTag,
+                      workerStatus:
+                          trabajadorService.trabajadores[index].trabajando,
                     ),
                     onTap: () {
                       trabajadorService.trabajadorSeleccionado =
@@ -61,7 +75,7 @@ class HomeScreen extends StatelessWidget {
             print(element.id);
           });
           trabajadorService.trabajadorSeleccionado = new Trabajador(
-              color: '', name: '', pasillo: 0, id: null, rfidTag: "");
+              color: '', name: '', trabajando: false, id: null, rfidTag: "");
           Navigator.pushNamed(context, 'formScreen');
         },
         backgroundColor: Colors.indigo,
@@ -74,12 +88,14 @@ class HomeScreen extends StatelessWidget {
 class _CustomContainer extends StatelessWidget {
   final String workerName;
   final String tagRfid;
+  final bool workerStatus;
   final trabajadorService;
   const _CustomContainer(
       {Key? key,
       required this.workerName,
       required this.trabajadorService,
-      required this.tagRfid})
+      required this.tagRfid,
+      required this.workerStatus})
       : super(key: key);
 
   @override
@@ -89,25 +105,59 @@ class _CustomContainer extends StatelessWidget {
       child: Container(
         width: 40,
         height: 40,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Stack(
           children: [
-            Text(
-              workerName,
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    workerName,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15),
+                  ),
+                  Text(
+                    tagRfid,
+                    style: TextStyle(color: Colors.white, fontSize: 10),
+                  ),
+                ],
+              ),
             ),
-            Text(
-              tagRfid,
-              style: TextStyle(color: Colors.white, fontSize: 10),
-            ),
+            Positioned(
+              top: 10,
+              left: 5,
+              child: _CustomCircle(
+                workerStatus: workerStatus,
+              ),
+            )
           ],
         ),
         decoration: _cardBorders(),
       ),
     );
+  }
+}
+
+class _CustomCircle extends StatelessWidget {
+  final workerStatus;
+  const _CustomCircle({
+    Key? key,
+    required this.workerStatus,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return workerStatus
+        ? Icon(
+            Icons.circle,
+            color: Colors.green,
+          )
+        : Icon(
+            Icons.circle,
+            color: Colors.red,
+          );
   }
 }
 

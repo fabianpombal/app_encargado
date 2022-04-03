@@ -3,8 +3,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:frontend/models/models.dart';
 import 'package:frontend/providers/Trabajador_form_provider.dart';
 import 'package:frontend/services/trabajador_service.dart';
-import 'package:mqtt_client/mqtt_client.dart';
-import 'package:mqtt_client/mqtt_server_client.dart';
+
 import 'package:provider/provider.dart';
 
 class TrabajadorFormScreen extends StatelessWidget {
@@ -36,7 +35,7 @@ class _FormScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final trabajadorForm = Provider.of<TrabajadorFormProvider>(context);
     trabajadorService.trabajadorSeleccionado =
-        new Trabajador(color: '', name: '', pasillo: 0, rfidTag: "");
+        new Trabajador(color: '', name: '', trabajando: false, rfidTag: "");
     return Scaffold(
       appBar: AppBar(
         title: Text("Nuevo Trabajador"),
@@ -62,23 +61,10 @@ class _FormScreen extends StatelessWidget {
                 height: 20,
               ),
               TextFormField(
-                decoration:
-                    InputDecoration(hintText: '1', labelText: 'Pasillo'),
+                decoration: InputDecoration(
+                    hintText: '89712932', labelText: 'Tag RFID'),
                 onChanged: (value) {
-                  if (int.tryParse(value) == null) {
-                    return;
-                  } else {
-                    trabajadorForm.trabajador.pasillo = int.parse(value);
-                  }
-                },
-                validator: (value) {
-                  if (value == null) {
-                    return "el pasillo es obligatorio";
-                  } else if (int.tryParse(value) == null) {
-                    return "introduce un pasillo valido";
-                  } else if (int.parse(value) == 0) {
-                    return "el pasillo tiene que ser diferente de 0";
-                  }
+                  trabajadorForm.trabajador.rfidTag = value;
                 },
               ),
               const SizedBox(
