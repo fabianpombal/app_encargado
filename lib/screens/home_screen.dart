@@ -107,22 +107,39 @@ class _CustomContainer extends StatelessWidget {
         height: 40,
         child: Stack(
           children: [
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    workerName,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15),
-                  ),
-                  Text(
-                    tagRfid,
-                    style: TextStyle(color: Colors.white, fontSize: 10),
-                  ),
-                ],
+            ClipRRect(
+              child: Container(
+                height: double.infinity,
+                width: double.infinity,
+                child: const Image(
+                  image: NetworkImage(
+                      'https://firebasestorage.googleapis.com/v0/b/lpro-6c2f9.appspot.com/o/14cae396ae5a7e85c735d52905f5d248.jpg?alt=media&token=7b438861-2369-43a8-83de-24e81ca5e0bd'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              child: Container(
+                width: 120,
+                height: 30,
+                color: Colors.purple,
+                child: Column(
+                  children: [
+                    Text(
+                      workerName,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15),
+                    ),
+                    Text(
+                      tagRfid,
+                      style: TextStyle(color: Colors.white, fontSize: 10),
+                    ),
+                  ],
+                ),
               ),
             ),
             Positioned(
@@ -163,7 +180,7 @@ class _CustomCircle extends StatelessWidget {
 
 BoxDecoration _cardBorders() => BoxDecoration(
         color: Colors.indigo,
-        borderRadius: BorderRadius.circular(50),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: const [
           BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 5))
         ]);
