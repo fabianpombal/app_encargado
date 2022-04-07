@@ -44,6 +44,13 @@ class HomeScreen extends StatelessWidget {
               width: double.infinity,
               child: GridView.builder(
                 itemBuilder: (BuildContext context, int index) {
+                  socketService.socket.on('mqtt-mensaje', (value) {
+                    if (trabajadorService.trabajadores[index].rfidTag ==
+                        value.toString()) {
+                      trabajadorService.trabajadores[index].trabajando = true;
+                      trabajadorService.updateState();
+                    }
+                  });
                   return GestureDetector(
                     child: _CustomContainer(
                       workerName: trabajadorService.trabajadores[index].name,
@@ -113,7 +120,7 @@ class _CustomContainer extends StatelessWidget {
                 width: double.infinity,
                 child: const Image(
                   image: NetworkImage(
-                      'https://firebasestorage.googleapis.com/v0/b/lpro-6c2f9.appspot.com/o/14cae396ae5a7e85c735d52905f5d248.jpg?alt=media&token=7b438861-2369-43a8-83de-24e81ca5e0bd'),
+                      'https://firebasestorage.googleapis.com/v0/b/lpro-6c2f9.appspot.com/o/4b6473aa-670d-4ce0-891a-20e8a3e22107.jpg?alt=media&token=7ae5d219-c646-4e86-9c45-01b5e95014a2'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -124,13 +131,13 @@ class _CustomContainer extends StatelessWidget {
               child: Container(
                 width: 120,
                 height: 30,
-                color: Colors.purple,
+                color: Colors.white12,
                 child: Column(
                   children: [
                     Text(
                       workerName,
                       style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontWeight: FontWeight.bold,
                           fontSize: 15),
                     ),

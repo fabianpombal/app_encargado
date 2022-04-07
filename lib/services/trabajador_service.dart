@@ -67,4 +67,8 @@ class TrabajadorService extends ChangeNotifier {
     this.trabajadores.add(trabajador);
     return '';
   }
+
+  void updateState() {
+    notifyListeners();
+  }
 }

@@ -16,7 +16,7 @@ class SocketService with ChangeNotifier {
 
   void _initConfig() {
     this._socket = IO.io(
-        'http://192.168.1.38:8001',
+        'http://localhost:8001',
         IO.OptionBuilder().setTransports(['websocket']).setExtraHeaders(
             {'foo': 'bar'}).build());
 
