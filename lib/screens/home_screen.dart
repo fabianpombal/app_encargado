@@ -113,7 +113,7 @@ class _CustomContainer extends StatelessWidget {
                 width: double.infinity,
                 child: const Image(
                   image: NetworkImage(
-                      'https://firebasestorage.googleapis.com/v0/b/lpro-6c2f9.appspot.com/o/14cae396ae5a7e85c735d52905f5d248.jpg?alt=media&token=7b438861-2369-43a8-83de-24e81ca5e0bd'),
+                      'https://firebasestorage.googleapis.com/v0/b/lpro-6c2f9.appspot.com/o/trabajadores%2FFP7CqOnXIAQuTz3.png?alt=media&token=272545ea-2298-4668-bbda-9e126bb6e648'),
                   fit: BoxFit.cover,
                 ),
               ),
