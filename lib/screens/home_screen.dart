@@ -51,6 +51,7 @@ class HomeScreen extends StatelessWidget {
                       tagRfid: trabajadorService.trabajadores[index].rfidTag,
                       workerStatus:
                           trabajadorService.trabajadores[index].trabajando,
+                      picture: trabajadorService.trabajadores[index].picture!,
                     ),
                     onTap: () {
                       trabajadorService.trabajadorSeleccionado =
@@ -75,7 +76,12 @@ class HomeScreen extends StatelessWidget {
             print(element.id);
           });
           trabajadorService.trabajadorSeleccionado = new Trabajador(
-              color: '', name: '', trabajando: false, id: null, rfidTag: "");
+              color: '',
+              name: '',
+              trabajando: false,
+              id: null,
+              rfidTag: "",
+              picture: "");
           Navigator.pushNamed(context, 'formScreen');
         },
         backgroundColor: Colors.indigo,
@@ -90,13 +96,16 @@ class _CustomContainer extends StatelessWidget {
   final String tagRfid;
   final bool workerStatus;
   final trabajadorService;
+  final String picture;
   const _CustomContainer(
       {Key? key,
       required this.workerName,
       required this.trabajadorService,
       required this.tagRfid,
-      required this.workerStatus})
+      required this.workerStatus,
+      required this.picture})
       : super(key: key);
+  final num = 2 + 1;
 
   @override
   Widget build(BuildContext context) {
@@ -111,11 +120,15 @@ class _CustomContainer extends StatelessWidget {
               child: Container(
                 height: double.infinity,
                 width: double.infinity,
-                child: const Image(
-                  image: NetworkImage(
-                      'https://firebasestorage.googleapis.com/v0/b/lpro-6c2f9.appspot.com/o/trabajadores%2FFP7CqOnXIAQuTz3.png?alt=media&token=272545ea-2298-4668-bbda-9e126bb6e648'),
-                  fit: BoxFit.cover,
-                ),
+                child: picture != "null"
+                    ? Image(
+                        image: NetworkImage(picture),
+                        fit: BoxFit.cover,
+                      )
+                    : const Image(
+                        image: AssetImage('assets/no-image3.png'),
+                        fit: BoxFit.cover,
+                      ),
               ),
             ),
             Positioned(
@@ -124,7 +137,7 @@ class _CustomContainer extends StatelessWidget {
               child: Container(
                 width: 120,
                 height: 30,
-                color: Colors.purple,
+                color: Colors.indigo,
                 child: Column(
                   children: [
                     Text(

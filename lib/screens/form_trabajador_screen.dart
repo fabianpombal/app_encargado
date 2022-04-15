@@ -47,7 +47,6 @@ class _FormScreenState extends State<_FormScreen> {
   @override
   void initState() {
     super.initState();
-    Firebase.initializeApp();
   }
 
   @override
@@ -80,6 +79,7 @@ class _FormScreenState extends State<_FormScreen> {
                 height: 20,
               ),
               TextFormField(
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                     hintText: '89712932', labelText: 'Tag RFID'),
                 onChanged: (value) {
@@ -140,15 +140,16 @@ class _FormScreenState extends State<_FormScreen> {
               ),
               MaterialButton(
                 onPressed: () async {
-                  final path =
-                      'gs://lpro-6c2f9.appspot.com/trabajadores/${pickedFile!.name}';
+                  if (pickedFile == null) return;
+                  final path = 'trabajadores/${pickedFile!.name}';
                   final file = File(pickedFile!.path!);
-                  final ref = FirebaseStorage.instance.ref().child(path);
+                  final ref = FirebaseStorage.instance.ref(path);
 
                   uploadTask = ref.putFile(file);
                   final snapshot = await uploadTask!.whenComplete(() {});
                   final urlDownload = await snapshot.ref.getDownloadURL();
                   print(urlDownload);
+                  trabajadorForm.trabajador.picture = urlDownload;
 
                   widget.trabajadorService
                       .saveOrCreateTrabajador(trabajadorForm.trabajador);

@@ -6,12 +6,14 @@ class Trabajador {
       required this.name,
       required this.trabajando,
       required this.rfidTag,
+      this.picture,
       this.id});
 
   String color;
   String name;
   bool trabajando;
   String rfidTag;
+  String? picture;
   String? id;
 
   factory Trabajador.fromJson(String str) =>
@@ -22,6 +24,7 @@ class Trabajador {
   factory Trabajador.fromMap(Map<String, dynamic> json) => Trabajador(
         color: json["color"],
         name: json["name"],
+        picture: json["picture"],
         trabajando: json["trabajando"],
         rfidTag: json["rfidTag"],
       );
@@ -30,6 +33,7 @@ class Trabajador {
         "color": color,
         "name": name,
         "trabajando": trabajando,
+        "picture": picture,
         "rfidTag": rfidTag
       };
 

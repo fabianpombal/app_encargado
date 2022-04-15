@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'package:frontend/screens/screens.dart';
@@ -5,7 +6,11 @@ import 'package:frontend/services/services.dart';
 import 'package:frontend/themes/custom_theme.dart';
 import 'package:provider/provider.dart';
 
-void main() => runApp(AppState());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(AppState());
+}
 
 class AppState extends StatelessWidget {
   @override
