@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Bubble extends StatelessWidget {
-  final String status;
+  final bool status;
   const Bubble({Key? key, required this.status}) : super(key: key);
 
   @override
@@ -9,8 +9,7 @@ class Bubble extends StatelessWidget {
     return Container(
       height: 10,
       width: 10,
-      decoration:
-          _cardBorders(status == 'completed' ? Colors.yellow : Colors.green),
+      decoration: _cardBorders((status != true) ? Colors.yellow : Colors.green),
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:frontend/models/models.dart';
 import 'package:frontend/screens/screens.dart';
@@ -14,19 +16,11 @@ class HomeScreen extends StatelessWidget {
     final productService = Provider.of<ProductService>(context);
 
     if (trabajadorService.isLoading) {
-      socketService.socket.emit('mensaje-nuevo', 'mensaje');
-      productService.products.forEach((element) {
-        socketService.socket.emit('add-product', {
-          "name": element.name,
-          "estante": element.estante,
-          "valda": element.valda,
-          "stock": element.stock,
-          "rfidTag": element.rfidTag,
-          "id": element.id
-        });
-      });
       return LoadingScreen();
     }
+    socketService.socket.on("new-order", (data) {
+      print("${data}");
+    });
 
     final size = MediaQuery.of(context).size;
 
@@ -34,6 +28,13 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('ReadyForId'),
         elevation: 0,
+        actions: [
+          IconButton(
+              onPressed: () {
+                print("Accion");
+              },
+              icon: Icon(Icons.info))
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
@@ -53,11 +54,8 @@ class HomeScreen extends StatelessWidget {
                   });
                   return GestureDetector(
                     child: _CustomContainer(
-                      workerName: trabajadorService.trabajadores[index].name,
+                      trabajador: trabajadorService.trabajadores[index],
                       trabajadorService: trabajadorService,
-                      tagRfid: trabajadorService.trabajadores[index].rfidTag,
-                      workerStatus:
-                          trabajadorService.trabajadores[index].trabajando,
                     ),
                     onTap: () {
                       trabajadorService.trabajadorSeleccionado =
@@ -82,7 +80,12 @@ class HomeScreen extends StatelessWidget {
             print(element.id);
           });
           trabajadorService.trabajadorSeleccionado = new Trabajador(
-              color: '', name: '', trabajando: false, id: null, rfidTag: "");
+              color: '',
+              name: '',
+              trabajando: false,
+              id: null,
+              rfidTag: "",
+              picture: "");
           Navigator.pushNamed(context, 'formScreen');
         },
         backgroundColor: Colors.indigo,
@@ -93,17 +96,14 @@ class HomeScreen extends StatelessWidget {
 }
 
 class _CustomContainer extends StatelessWidget {
-  final String workerName;
-  final String tagRfid;
-  final bool workerStatus;
   final trabajadorService;
-  const _CustomContainer(
-      {Key? key,
-      required this.workerName,
-      required this.trabajadorService,
-      required this.tagRfid,
-      required this.workerStatus})
-      : super(key: key);
+  final Trabajador trabajador;
+  const _CustomContainer({
+    Key? key,
+    required this.trabajadorService,
+    required this.trabajador,
+  }) : super(key: key);
+  final num = 2 + 1;
 
   @override
   Widget build(BuildContext context) {
@@ -118,11 +118,15 @@ class _CustomContainer extends StatelessWidget {
               child: Container(
                 height: double.infinity,
                 width: double.infinity,
-                child: const Image(
-                  image: NetworkImage(
-                      'https://firebasestorage.googleapis.com/v0/b/lpro-6c2f9.appspot.com/o/4b6473aa-670d-4ce0-891a-20e8a3e22107.jpg?alt=media&token=7ae5d219-c646-4e86-9c45-01b5e95014a2'),
-                  fit: BoxFit.cover,
-                ),
+                child: trabajador.picture! != "null"
+                    ? Image(
+                        image: NetworkImage(trabajador.picture!),
+                        fit: BoxFit.cover,
+                      )
+                    : const Image(
+                        image: AssetImage('assets/no-image3.png'),
+                        fit: BoxFit.cover,
+                      ),
               ),
             ),
             Positioned(
@@ -131,18 +135,18 @@ class _CustomContainer extends StatelessWidget {
               child: Container(
                 width: 120,
                 height: 30,
-                color: Colors.white12,
+                color: Colors.indigo,
                 child: Column(
                   children: [
                     Text(
-                      workerName,
+                      trabajador.name,
                       style: TextStyle(
-                          color: Colors.black,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 15),
                     ),
                     Text(
-                      tagRfid,
+                      trabajador.rfidTag,
                       style: TextStyle(color: Colors.white, fontSize: 10),
                     ),
                   ],
@@ -153,7 +157,7 @@ class _CustomContainer extends StatelessWidget {
               top: 10,
               left: 5,
               child: _CustomCircle(
-                workerStatus: workerStatus,
+                workerStatus: trabajador.trabajando,
               ),
             )
           ],

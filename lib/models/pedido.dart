@@ -1,17 +1,19 @@
+// To parse this JSON data, do
+//
+//     final pedido = pedidoFromMap(jsonString);
+
 import 'dart:convert';
 
 class Pedido {
   Pedido(
-      {required this.estado,
-      required this.idProducto,
-      required this.idTrabajador,
-      required this.numProductos,
+      {required this.productos,
+      required this.trabajadorId,
+      required this.completed,
       this.id});
 
-  String estado;
-  String idProducto;
-  String idTrabajador;
-  int numProductos;
+  String productos;
+  String trabajadorId;
+  bool completed;
   String? id;
 
   factory Pedido.fromJson(String str) => Pedido.fromMap(json.decode(str));
@@ -19,23 +21,20 @@ class Pedido {
   String toJson() => json.encode(toMap());
 
   factory Pedido.fromMap(Map<String, dynamic> json) => Pedido(
-        estado: json["estado"],
-        idProducto: json["idProducto"],
-        idTrabajador: json["idTrabajador"],
-        numProductos: json["numProductos"],
-      );
+      productos: json["productos"],
+      trabajadorId: json["trabajadorId"],
+      completed: json["completed"]);
 
   Map<String, dynamic> toMap() => {
-        "estado": estado,
-        "idProducto": idProducto,
-        "idTrabajador": idTrabajador,
-        "numProductos": numProductos,
+        "productos": productos,
+        "trabajadorId": trabajadorId,
+        "completed": completed
       };
 
   Pedido copy() => Pedido(
-      estado: this.estado,
-      idProducto: this.idProducto,
-      idTrabajador: this.idTrabajador,
-      numProductos: this.numProductos,
-      id: this.id);
+        productos: this.productos,
+        trabajadorId: this.trabajadorId,
+        completed: this.completed,
+        id: this.id,
+      );
 }

@@ -60,9 +60,70 @@ class _PantallaPedidos extends StatelessWidget {
       body: Container(
         child: ListView.builder(
           itemBuilder: (BuildContext context, int index) {
-            return ProductCard(
-              idPedido: pedidoServ.pedidosActivos[index].idProducto,
-              status: pedidoServ.pedidosActivos[index].estado,
+            return GestureDetector(
+              child: ProductCard(
+                productosPedido: pedidoServ.pedidosActivos[index].id!,
+                status: pedidoServ.pedidosActivos[index].completed,
+              ),
+              onTap: () {
+                List<String> prods =
+                    pedidoServ.pedidosActivos[index].productos.split(",");
+                showDialog(
+                    builder: (BuildContext context) {
+                      return Center(
+                        child: Container(
+                          height: 600,
+                          width: 700,
+                          color: Colors.white,
+                          child: ListView.builder(
+                            itemBuilder: (BuildContext context, int index) {
+                              return Padding(
+                                padding: const EdgeInsets.all(15.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Producto ${index + 1}",
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      " - Nombre: ${prodServ.listarPorId(prods[index])!.name}",
+                                      style: TextStyle(
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      "Estante: ${prodServ.listarPorId(prods[index])!.estante.toString()}",
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                    Text(
+                                        "Balda: ${prodServ.listarPorId(prods[index])!.valda.toString()}",
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.normal)),
+                                    Text(
+                                        "Tag RFID: ${prodServ.listarPorId(prods[index])!.rfidTag}",
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.normal)),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                            itemCount: prods.length,
+                          ),
+                        ),
+                      );
+                    },
+                    context: context);
+              },
             );
           },
           itemCount: pedidoServ.pedidosActivos.length,

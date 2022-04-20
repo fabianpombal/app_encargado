@@ -10,12 +10,33 @@ class PedidosService extends ChangeNotifier {
 
   bool isLoading = true;
   final List<Pedido> pedidosActivos = [];
+  final List<String> productosRfidTag = [];
+
+  final Pedido pedido = Pedido(
+    completed: false,
+    productos: '',
+    trabajadorId: '',
+  );
 
   final List<Pedido> pedidos = [];
 
   PedidosService(String workerId) {
     //this.loadPedidos();
     this.loadPedidosByWorker(workerId);
+  }
+
+  Future<String> createPedido(List<String> productos) async {
+    String listaProds = "";
+    productos.forEach((element) {
+      listaProds + "${element},";
+    });
+    final url = Uri.https(_baseUrl, 'pedidos.json');
+    pedido.productos = listaProds;
+    pedido.trabajadorId = "tagrfidnum4";
+    final res = await http.post(url, body: this.pedido.toJson());
+    final decodedData = json.decode(res.body);
+    print(decodedData);
+    return '';
   }
 
   Future<List<Pedido>> loadPedidos() async {
@@ -36,15 +57,14 @@ class PedidosService extends ChangeNotifier {
   Future<List<Pedido>> loadPedidosByWorker(String workerId) async {
     notifyListeners();
     final Map<String, String> queryParams = {
-      'orderBy': '\"idTrabajador\"',
+      'orderBy': '\"trabajadorId\"',
       "equalTo": '\"${workerId}\"'
     };
 
     final url = Uri.https(_baseUrl, '/pedidos.json', queryParams);
-    print(url.query);
+    print("QUERY: " + url.query);
     final res = await http.get(url);
 
-    print(res.body);
     final Map<String, dynamic> pedidosMap = json.decode(res.body);
     pedidosMap.forEach((key, value) {
       final tempPedidos = Pedido.fromMap(value);

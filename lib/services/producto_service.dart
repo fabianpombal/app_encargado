@@ -33,4 +33,14 @@ class ProductService extends ChangeNotifier {
 
     return this.products;
   }
+
+  Producto? listarPorId(String id) {
+    Producto? productoFun;
+    this.products.forEach((e) {
+      if (e.id == id) {
+        productoFun = e;
+      }
+    });
+    return productoFun;
+  }
 }

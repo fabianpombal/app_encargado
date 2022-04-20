@@ -1,3 +1,8 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:frontend/models/models.dart';
@@ -24,7 +29,7 @@ class TrabajadorFormScreen extends StatelessWidget {
   }
 }
 
-class _FormScreen extends StatelessWidget {
+class _FormScreen extends StatefulWidget {
   const _FormScreen({
     Key? key,
     required this.trabajadorService,
@@ -32,9 +37,22 @@ class _FormScreen extends StatelessWidget {
   final TrabajadorService trabajadorService;
 
   @override
+  State<_FormScreen> createState() => _FormScreenState();
+}
+
+class _FormScreenState extends State<_FormScreen> {
+  PlatformFile? pickedFile;
+  UploadTask? uploadTask;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final trabajadorForm = Provider.of<TrabajadorFormProvider>(context);
-    trabajadorService.trabajadorSeleccionado =
+    widget.trabajadorService.trabajadorSeleccionado =
         new Trabajador(color: '', name: '', trabajando: false, rfidTag: "");
     return Scaffold(
       appBar: AppBar(
@@ -61,6 +79,7 @@ class _FormScreen extends StatelessWidget {
                 height: 20,
               ),
               TextFormField(
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                     hintText: '89712932', labelText: 'Tag RFID'),
                 onChanged: (value) {
@@ -87,19 +106,62 @@ class _FormScreen extends StatelessWidget {
                   Colors.teal
                 ],
               ),
+              MaterialButton(
+                onPressed: () async {
+                  final res = await FilePicker.platform.pickFiles(
+                      type: FileType.custom, allowedExtensions: ['png', 'jpg']);
+                  if (res == null) return;
+                  setState(() {
+                    pickedFile = res.files.first;
+                  });
+                },
+                child: Text(
+                  'Seleccionar foto',
+                  style: TextStyle(color: Colors.white),
+                ),
+                color: Colors.indigo,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Container(
+                width: double.infinity,
+                height: 400,
+                child: pickedFile == null
+                    ? Text('No image yet')
+                    : Image.file(
+                        File(pickedFile!.path!),
+                        width: double.infinity,
+                        fit: BoxFit.fitHeight,
+                      ),
+              ),
               const SizedBox(
                 height: 20,
               ),
               MaterialButton(
-                onPressed: () {
-                  trabajadorService
+                onPressed: () async {
+                  if (pickedFile == null) return;
+                  final path = 'trabajadores/${pickedFile!.name}';
+                  final file = File(pickedFile!.path!);
+                  final ref = FirebaseStorage.instance.ref(path);
+
+                  uploadTask = ref.putFile(file);
+                  final snapshot = await uploadTask!.whenComplete(() {});
+                  final urlDownload = await snapshot.ref.getDownloadURL();
+                  print(urlDownload);
+                  trabajadorForm.trabajador.picture = urlDownload;
+
+                  widget.trabajadorService
                       .saveOrCreateTrabajador(trabajadorForm.trabajador);
 
                   // print(trabajadorForm.trabajador.color);
                   Navigator.pop(context);
                 },
                 color: Colors.indigo,
-                child: Text('Enviar'),
+                child: Text(
+                  'Enviar',
+                  style: TextStyle(color: Colors.white),
+                ),
               )
             ],
           ),
