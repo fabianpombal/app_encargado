@@ -21,7 +21,7 @@ class Producto {
   String toJson() => json.encode(toMap());
 
   factory Producto.fromMap(Map<String, dynamic> json) => Producto(
-      columna: json["columna"],
+      columna: json["columna"] as int,
       name: json["name"],
       stock: json["stock"],
       fila: json["fila"],

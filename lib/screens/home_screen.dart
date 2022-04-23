@@ -19,10 +19,6 @@ class HomeScreen extends StatelessWidget {
     //   return LoadingScreen();
     // }
 
-    socketService.socket.on("mqtt_message", (data) {
-      print("${data}");
-    });
-
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -51,10 +47,19 @@ class HomeScreen extends StatelessWidget {
               width: double.infinity,
               child: GridView.builder(
                 itemBuilder: (BuildContext context, int index) {
-                  socketService.socket.on('mqtt-mensaje', (value) {
+                  socketService.socket.on('operario_on', (value) {
+                    print(value);
                     if (trabajadorService.trabajadores[index].rfidTag ==
                         value.toString()) {
                       trabajadorService.trabajadores[index].trabajando = true;
+                      trabajadorService.updateState();
+                    }
+                  });
+                  socketService.socket.on('operario_off', (value) {
+                    print(value);
+                    if (trabajadorService.trabajadores[index].rfidTag ==
+                        value.toString()) {
+                      trabajadorService.trabajadores[index].trabajando = false;
                       trabajadorService.updateState();
                     }
                   });

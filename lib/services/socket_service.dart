@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/services/producto_service.dart';
+import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 enum ServerStatus { Online, Offline, Connecting }
@@ -16,7 +18,7 @@ class SocketService with ChangeNotifier {
 
   void _initConfig() {
     this._socket = IO.io(
-        'http://192.168.1.38:8001',
+        'http://192.168.1.41:8001',
         IO.OptionBuilder().setTransports(['websocket']).setExtraHeaders(
             {'foo': 'bar'}).build());
 
@@ -39,6 +41,6 @@ class SocketService with ChangeNotifier {
       print(data);
     });
 
-    this._socket.on('mqtt_message', (data) => print(data));
+    this._socket.on('mqtt-message', (data) => print(data));
   }
 }
