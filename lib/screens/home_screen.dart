@@ -15,10 +15,11 @@ class HomeScreen extends StatelessWidget {
     final socketService = Provider.of<SocketService>(context);
     final productService = Provider.of<ProductService>(context);
 
-    if (trabajadorService.isLoading) {
-      return LoadingScreen();
-    }
-    socketService.socket.on("new-order", (data) {
+    // if (trabajadorService.isLoading) {
+    //   return LoadingScreen();
+    // }
+
+    socketService.socket.on("mqtt_message", (data) {
       print("${data}");
     });
 
@@ -33,7 +34,12 @@ class HomeScreen extends StatelessWidget {
               onPressed: () {
                 print("Accion");
               },
-              icon: Icon(Icons.info))
+              icon: Icon(
+                Icons.info,
+                color: socketService.serverStatus == ServerStatus.Online
+                    ? Colors.green
+                    : Colors.red,
+              ))
         ],
       ),
       body: Padding(
@@ -115,16 +121,21 @@ class _CustomContainer extends StatelessWidget {
         child: Stack(
           children: [
             ClipRRect(
+              borderRadius: BorderRadius.circular(20),
               child: Container(
                 height: double.infinity,
                 width: double.infinity,
-                child: trabajador.picture! != "null"
-                    ? Image(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                ),
+                child: trabajador.picture != "null"
+                    ? FadeInImage(
+                        placeholder: const AssetImage('assets/load.gif'),
                         image: NetworkImage(trabajador.picture!),
                         fit: BoxFit.cover,
                       )
                     : const Image(
-                        image: AssetImage('assets/no-image3.png'),
+                        image: AssetImage('assets/no-image2.jpg'),
                         fit: BoxFit.cover,
                       ),
               ),
@@ -133,21 +144,25 @@ class _CustomContainer extends StatelessWidget {
               bottom: 0,
               left: 0,
               child: Container(
-                width: 120,
-                height: 30,
-                color: Colors.indigo,
+                width: 170,
+                height: 50,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(20),
+                        topRight: Radius.circular(20))),
                 child: Column(
                   children: [
                     Text(
                       trabajador.name,
                       style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontWeight: FontWeight.bold,
-                          fontSize: 15),
+                          fontSize: 18),
                     ),
                     Text(
                       trabajador.rfidTag,
-                      style: TextStyle(color: Colors.white, fontSize: 10),
+                      style: TextStyle(color: Colors.black26, fontSize: 14),
                     ),
                   ],
                 ),
@@ -189,9 +204,7 @@ class _CustomCircle extends StatelessWidget {
   }
 }
 
-BoxDecoration _cardBorders() => BoxDecoration(
-        color: Colors.indigo,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 5))
-        ]);
+BoxDecoration _cardBorders() =>
+    BoxDecoration(borderRadius: BorderRadius.circular(20), boxShadow: const [
+      BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 5))
+    ]);

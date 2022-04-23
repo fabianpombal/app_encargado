@@ -72,8 +72,8 @@ class _PantallaPedidos extends StatelessWidget {
                     builder: (BuildContext context) {
                       return Center(
                         child: Container(
-                          height: 600,
-                          width: 700,
+                          height: 400,
+                          width: 500,
                           color: Colors.white,
                           child: ListView.builder(
                             itemBuilder: (BuildContext context, int index) {
@@ -95,13 +95,13 @@ class _PantallaPedidos extends StatelessWidget {
                                           fontWeight: FontWeight.bold),
                                     ),
                                     Text(
-                                      "Estante: ${prodServ.listarPorId(prods[index])!.estante.toString()}",
+                                      "Estante: ${prodServ.listarPorId(prods[index])!.columna.toString()}",
                                       style: TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.normal),
                                     ),
                                     Text(
-                                        "Balda: ${prodServ.listarPorId(prods[index])!.valda.toString()}",
+                                        "Balda: ${prodServ.listarPorId(prods[index])!.fila.toString()}",
                                         style: TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.normal)),

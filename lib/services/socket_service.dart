@@ -16,7 +16,7 @@ class SocketService with ChangeNotifier {
 
   void _initConfig() {
     this._socket = IO.io(
-        'http://192.168.253.208:8001',
+        'http://192.168.1.38:8001',
         IO.OptionBuilder().setTransports(['websocket']).setExtraHeaders(
             {'foo': 'bar'}).build());
 
@@ -35,8 +35,10 @@ class SocketService with ChangeNotifier {
       notifyListeners();
     });
 
-    this._socket.on('nuevo-mensaje', (data) {
+    this._socket.on('operario_on', (data) {
       print(data);
     });
+
+    this._socket.on('mqtt_message', (data) => print(data));
   }
 }

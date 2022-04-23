@@ -2,17 +2,17 @@ import 'dart:convert';
 
 class Producto {
   Producto(
-      {required this.estante,
+      {required this.columna,
       required this.name,
       required this.stock,
-      required this.valda,
+      required this.fila,
       required this.rfidTag,
       this.id});
 
-  int estante;
+  int columna;
   String name;
   int stock;
-  int valda;
+  int fila;
   String rfidTag;
   String? id;
 
@@ -21,18 +21,17 @@ class Producto {
   String toJson() => json.encode(toMap());
 
   factory Producto.fromMap(Map<String, dynamic> json) => Producto(
-        estante: json["estante"],
-        name: json["name"],
-        stock: json["stock"],
-        valda: json["valda"],
-        rfidTag: json["rfidTag"]
-      );
+      columna: json["columna"],
+      name: json["name"],
+      stock: json["stock"],
+      fila: json["fila"],
+      rfidTag: json["rfidTag"]);
 
   Map<String, dynamic> toMap() => {
-        "estante": estante,
+        "columna": columna,
         "name": name,
         "stock": stock,
-        "valda": valda,
+        "fila": fila,
         "rfidTag": rfidTag,
       };
 }
