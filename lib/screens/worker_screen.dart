@@ -9,7 +9,7 @@ class WorkerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final trabajadorServ = Provider.of<TrabajadorService>(context);
-    final socketService = Provider.of<SocketService>(context);
+
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (context) => ProductService()),
@@ -19,7 +19,6 @@ class WorkerScreen extends StatelessWidget {
         ],
         child: _PantallaPedidos(
           trabajadorServ: trabajadorServ,
-          socketService: socketService,
         ));
   }
 }
@@ -28,11 +27,9 @@ class _PantallaPedidos extends StatelessWidget {
   const _PantallaPedidos({
     Key? key,
     required this.trabajadorServ,
-    required this.socketService,
   }) : super(key: key);
 
   final TrabajadorService trabajadorServ;
-  final SocketService socketService;
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +40,6 @@ class _PantallaPedidos extends StatelessWidget {
     int G = 0;
     int B = 0;
 
-    // final List<Pedido> pedidosAux = pedidoServ.loadPedidosByWorker(trabajadorServ.trabajadorSeleccionado.rfidTag);
-
     List<String> colorAux =
         trabajadorServ.trabajadorSeleccionado.color.split(",");
     R = int.parse(colorAux[0]);
@@ -53,7 +48,7 @@ class _PantallaPedidos extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('${trabajadorServ.trabajadorSeleccionado.name}'),
+        title: Text(trabajadorServ.trabajadorSeleccionado.name),
         elevation: 0,
         backgroundColor: Color.fromRGBO(R, G, B, 1),
       ),
@@ -84,33 +79,33 @@ class _PantallaPedidos extends StatelessWidget {
                                   children: [
                                     Text(
                                       "Producto ${index + 1}",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           color: Colors.red,
                                           fontWeight: FontWeight.bold),
                                     ),
                                     Text(
                                       " - Nombre: ${prodServ.listarPorId(prods[index])!.name}",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 17,
                                           fontWeight: FontWeight.bold),
                                     ),
                                     Text(
                                       "Estante: ${prodServ.listarPorId(prods[index])!.columna.toString()}",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.normal),
                                     ),
                                     Text(
                                         "Balda: ${prodServ.listarPorId(prods[index])!.fila.toString()}",
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.normal)),
                                     Text(
                                         "Tag RFID: ${prodServ.listarPorId(prods[index])!.rfidTag}",
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.normal)),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 20,
                                     ),
                                   ],
@@ -130,13 +125,8 @@ class _PantallaPedidos extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.message),
+        child: const Icon(Icons.message),
         onPressed: () {
-          socketService.socket.emit('mensaje-nuevo',
-              {"id": trabajadorServ.trabajadorSeleccionado.id});
-          trabajadorServ.trabajadores.forEach((element) {
-            print(element.id);
-          });
           print(trabajadorServ.trabajadorSeleccionado.id);
         },
       ),

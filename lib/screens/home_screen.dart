@@ -1,8 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:frontend/models/models.dart';
-import 'package:frontend/screens/screens.dart';
+import 'package:frontend/mqtt/mqtt_manager.dart';
+import 'package:frontend/mqtt/state/mqtt_app_state.dart';
 import 'package:frontend/services/services.dart';
 import 'package:provider/provider.dart';
 
@@ -11,16 +10,15 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late MqttManager manager;
     final trabajadorService = Provider.of<TrabajadorService>(context);
-    final socketService = Provider.of<SocketService>(context);
+    final mqttService = Provider.of<MqttAppConnectionState>(context);
     final productService = Provider.of<ProductService>(context);
 
     // if (trabajadorService.isLoading) {
     //   return LoadingScreen();
     // }
-
     final size = MediaQuery.of(context).size;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('ReadyForId'),
@@ -28,66 +26,73 @@ class HomeScreen extends StatelessWidget {
         actions: [
           IconButton(
               onPressed: () {
-                print("Accion");
+                if (mqttService.appConnectionState ==
+                    AppConnectionState.disconnected) {
+                  manager = MqttManager(
+                      host: 'broker.emqx.io',
+                      topic: 'test/topic/mensaje',
+                      id: 'android',
+                      state: mqttService);
+                  manager.initializeMqttClient();
+                  manager.connect();
+                }
+                if (mqttService.appConnectionState ==
+                    AppConnectionState.connected) {
+                  manager.publish('hola de nuevo');
+                }
               },
-              icon: Icon(
-                Icons.info,
-                color: socketService.serverStatus == ServerStatus.Online
-                    ? Colors.green
-                    : Colors.red,
-              ))
+              icon: const Icon(Icons.rss_feed))
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: Center(
-          child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              height: double.infinity,
-              width: double.infinity,
-              child: GridView.builder(
-                itemBuilder: (BuildContext context, int index) {
-                  socketService.socket.on('pedido', (payload) {
-                    print("NUEVO: $payload");
-                  });
-
-                  socketService.socket.on('operario_on', (value) {
-                    print(value);
-                    trabajadorService.trabajadores.forEach((trabajador) {
-                      if (trabajador.rfidTag == value.toString()) {
-                        trabajador.trabajando = true;
-                        // trabajadorService.updateState();
-                        trabajadorService.saveOrCreateTrabajador(trabajador);
-                      }
-                    });
-                  });
-                  socketService.socket.on('operario_off', (value) {
-                    print(value);
-                    trabajadorService.trabajadores.forEach((trabajador) {
-                      if (trabajador.rfidTag == value.toString()) {
-                        trabajador.trabajando = false;
-                        // trabajadorService.updateState();
-                        trabajadorService.saveOrCreateTrabajador(trabajador);
-                      }
-                    });
-                  });
-                  return GestureDetector(
-                    child: _CustomContainer(
-                      trabajador: trabajadorService.trabajadores[index],
-                      trabajadorService: trabajadorService,
-                    ),
-                    onTap: () {
-                      trabajadorService.trabajadorSeleccionado =
-                          trabajadorService.trabajadores[index].copy();
-                      Navigator.pushNamed(context, 'worker');
-                    },
-                  );
-                },
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4),
-                itemCount: trabajadorService.trabajadores.length,
-              )),
-        ),
+      body: Column(
+        children: [
+          _buildConnectionStateText(
+              _prepareStateMessageFrom(mqttService.appConnectionState)),
+          Center(
+            child: SizedBox(
+                height: double.infinity,
+                width: double.infinity,
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  itemBuilder: (BuildContext context, int index) {
+                    // socketService.socket.on('operario_on', (value) {
+                    //   print(value);
+                    //   for (var trabajador in trabajadorService.trabajadores) {
+                    //     if (trabajador.rfidTag == value.toString()) {
+                    //       trabajador.trabajando = true;
+                    //       // trabajadorService.updateState();
+                    //       trabajadorService.saveOrCreateTrabajador(trabajador);
+                    //     }
+                    //   }
+                    // });
+                    // socketService.socket.on('operario_off', (value) {
+                    //   print(value);
+                    //   for (var trabajador in trabajadorService.trabajadores) {
+                    //     if (trabajador.rfidTag == value.toString()) {
+                    //       trabajador.trabajando = false;
+                    //       // trabajadorService.updateState();
+                    //       trabajadorService.saveOrCreateTrabajador(trabajador);
+                    //     }
+                    //   }
+                    // });
+                    return GestureDetector(
+                      child: _CustomContainer(
+                        trabajador: trabajadorService.trabajadores[index],
+                        trabajadorService: trabajadorService,
+                      ),
+                      onTap: () {
+                        trabajadorService.trabajadorSeleccionado =
+                            trabajadorService.trabajadores[index].copy();
+                        Navigator.pushNamed(context, 'worker');
+                      },
+                    );
+                  },
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4),
+                  itemCount: trabajadorService.trabajadores.length,
+                )),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(
@@ -95,10 +100,10 @@ class HomeScreen extends StatelessWidget {
           color: Colors.white,
         ),
         onPressed: () {
-          trabajadorService.trabajadores.forEach((element) {
+          for (var element in trabajadorService.trabajadores) {
             print(element.id);
-          });
-          trabajadorService.trabajadorSeleccionado = new Trabajador(
+          }
+          trabajadorService.trabajadorSeleccionado = Trabajador(
               color: '',
               name: '',
               trabajando: false,
@@ -138,7 +143,7 @@ class _CustomContainer extends StatelessWidget {
               child: Container(
                 height: double.infinity,
                 width: double.infinity,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(20)),
                 ),
                 child: trabajador.picture != "null"
@@ -159,7 +164,7 @@ class _CustomContainer extends StatelessWidget {
               child: Container(
                 width: 170,
                 height: 50,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(20),
@@ -168,14 +173,15 @@ class _CustomContainer extends StatelessWidget {
                   children: [
                     Text(
                       trabajador.name,
-                      style: TextStyle(
+                      style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
                           fontSize: 18),
                     ),
                     Text(
                       trabajador.rfidTag,
-                      style: TextStyle(color: Colors.black26, fontSize: 14),
+                      style:
+                          const TextStyle(color: Colors.black26, fontSize: 14),
                     ),
                   ],
                 ),
@@ -206,14 +212,37 @@ class _CustomCircle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return workerStatus
-        ? Icon(
+        ? const Icon(
             Icons.circle,
             color: Colors.green,
           )
-        : Icon(
+        : const Icon(
             Icons.circle,
             color: Colors.red,
           );
+  }
+}
+
+Widget _buildConnectionStateText(String status) {
+  return Row(
+    children: <Widget>[
+      Expanded(
+        child: Container(
+            color: Colors.deepOrangeAccent,
+            child: Text(status, textAlign: TextAlign.center)),
+      ),
+    ],
+  );
+}
+
+String _prepareStateMessageFrom(AppConnectionState state) {
+  switch (state) {
+    case AppConnectionState.connected:
+      return 'Connected';
+    case AppConnectionState.connecting:
+      return 'Connecting';
+    case AppConnectionState.disconnected:
+      return 'Disconnected';
   }
 }
 

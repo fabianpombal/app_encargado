@@ -7,6 +7,8 @@ import 'package:frontend/services/services.dart';
 import 'package:frontend/themes/custom_theme.dart';
 import 'package:provider/provider.dart';
 
+import 'mqtt/state/mqtt_app_state.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -19,8 +21,8 @@ class AppState extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => TrabajadorService()),
-        ChangeNotifierProvider(create: (context) => SocketService()),
-        ChangeNotifierProvider(create: (context) => ProductService())
+        ChangeNotifierProvider(create: (context) => ProductService()),
+        ChangeNotifierProvider(create: (context) => MqttAppConnectionState())
       ],
       child: MyApp(),
     );
@@ -36,11 +38,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Material App Bar'),
+          title: const Text('Material App Bar'),
         ),
         body: Center(
           child: Container(
-            child: Text('Hello World'),
+            child: const Text('Hello World'),
           ),
         ),
       ),

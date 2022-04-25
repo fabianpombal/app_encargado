@@ -1,40 +1,39 @@
-import 'package:flutter/material.dart';
-import 'package:frontend/services/producto_service.dart';
-import 'package:provider/provider.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
+// import 'package:flutter/material.dart';
 
-enum ServerStatus { Online, Offline, Connecting }
+// import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-class SocketService with ChangeNotifier {
-  ServerStatus _serverStatus = ServerStatus.Connecting;
-  late IO.Socket _socket;
+// enum ServerStatus { Online, Offline, Connecting }
 
-  SocketService() {
-    this._initConfig();
-  }
+// class SocketService with ChangeNotifier {
+//   ServerStatus _serverStatus = ServerStatus.Connecting;
+//   late IO.Socket _socket;
 
-  ServerStatus get serverStatus => this._serverStatus;
-  IO.Socket get socket => this._socket;
+//   SocketService() {
+//     _initConfig();
+//   }
 
-  void _initConfig() {
-    this._socket = IO.io(
-        'http://localhost:8001',
-        IO.OptionBuilder().setTransports(['websocket']).setExtraHeaders(
-            {'foo': 'bar'}).build());
+//   ServerStatus get serverStatus => _serverStatus;
+//   IO.Socket get socket => _socket;
 
-    // socket.connect();
-    this._socket.clearListeners();
-    this._socket.onConnect((_) {
-      print('connect');
-      this._serverStatus = ServerStatus.Online;
-      socket.emit("mensaje-nuevo", "test");
-      notifyListeners();
-    });
+//   void _initConfig() {
+//     _socket = IO.io(
+//         'http://localhost:8001',
+//         IO.OptionBuilder().setTransports(['websocket']).setExtraHeaders(
+//             {'foo': 'bar'}).build());
 
-    this._socket.onDisconnect((_) {
-      print('disconnect');
-      this._serverStatus = ServerStatus.Offline;
-      notifyListeners();
-    });
-  }
-}
+//     // socket.connect();
+//     _socket.clearListeners();
+//     _socket.onConnect((_) {
+//       print('connect');
+//       _serverStatus = ServerStatus.Online;
+//       socket.emit("mensaje-nuevo", "test");
+//       notifyListeners();
+//     });
+
+//     _socket.onDisconnect((_) {
+//       print('disconnect');
+//       _serverStatus = ServerStatus.Offline;
+//       notifyListeners();
+//     });
+//   }
+// }
