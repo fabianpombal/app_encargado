@@ -18,12 +18,12 @@ class SocketService with ChangeNotifier {
 
   void _initConfig() {
     this._socket = IO.io(
-        'http://192.168.1.41:8001',
+        'http://localhost:8001',
         IO.OptionBuilder().setTransports(['websocket']).setExtraHeaders(
             {'foo': 'bar'}).build());
 
     // socket.connect();
-
+    this._socket.clearListeners();
     this._socket.onConnect((_) {
       print('connect');
       this._serverStatus = ServerStatus.Online;
@@ -36,11 +36,5 @@ class SocketService with ChangeNotifier {
       this._serverStatus = ServerStatus.Offline;
       notifyListeners();
     });
-
-    this._socket.on('operario_on', (data) {
-      print(data);
-    });
-
-    this._socket.on('mqtt-message', (data) => print(data));
   }
 }

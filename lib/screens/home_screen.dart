@@ -47,21 +47,29 @@ class HomeScreen extends StatelessWidget {
               width: double.infinity,
               child: GridView.builder(
                 itemBuilder: (BuildContext context, int index) {
+                  socketService.socket.on('pedido', (payload) {
+                    print("NUEVO: $payload");
+                  });
+
                   socketService.socket.on('operario_on', (value) {
                     print(value);
-                    if (trabajadorService.trabajadores[index].rfidTag ==
-                        value.toString()) {
-                      trabajadorService.trabajadores[index].trabajando = true;
-                      trabajadorService.updateState();
-                    }
+                    trabajadorService.trabajadores.forEach((trabajador) {
+                      if (trabajador.rfidTag == value.toString()) {
+                        trabajador.trabajando = true;
+                        // trabajadorService.updateState();
+                        trabajadorService.saveOrCreateTrabajador(trabajador);
+                      }
+                    });
                   });
                   socketService.socket.on('operario_off', (value) {
                     print(value);
-                    if (trabajadorService.trabajadores[index].rfidTag ==
-                        value.toString()) {
-                      trabajadorService.trabajadores[index].trabajando = false;
-                      trabajadorService.updateState();
-                    }
+                    trabajadorService.trabajadores.forEach((trabajador) {
+                      if (trabajador.rfidTag == value.toString()) {
+                        trabajador.trabajando = false;
+                        // trabajadorService.updateState();
+                        trabajadorService.saveOrCreateTrabajador(trabajador);
+                      }
+                    });
                   });
                   return GestureDetector(
                     child: _CustomContainer(

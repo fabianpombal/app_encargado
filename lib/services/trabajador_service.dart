@@ -21,12 +21,9 @@ class TrabajadorService extends ChangeNotifier {
     notifyListeners();
     final url = Uri.https(_baseUrl, '/trabajadores.json');
     final res = await http.get(url);
-    int a = 0;
 
     final Map<String, dynamic> trabajadoresMap = json.decode(res.body);
     trabajadoresMap.forEach((key, value) {
-      if (a == 0) print("VALOR: ${value.runtimeType}");
-      a++;
       final tempTrabajador = Trabajador.fromMap(value);
       tempTrabajador.id = key;
       // print(tempTrabajador.id);
@@ -52,7 +49,7 @@ class TrabajadorService extends ChangeNotifier {
   }
 
   Future<String> updateTrabajador(Trabajador trabajador) async {
-    final url = Uri.https(_baseUrl, 'Trabajadores/${trabajador.id}.json');
+    final url = Uri.https(_baseUrl, 'trabajadores/${trabajador.id}.json');
     final res = await http.put(url, body: trabajador.toJson());
     final decodedData = res.body;
     //print(decodedData);
