@@ -1,13 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
+import 'package:frontend/mqtt/state/MQTTAppState.dart';
+import 'package:frontend/screens/mqttView.dart';
 
 import 'package:frontend/screens/screens.dart';
 import 'package:frontend/services/services.dart';
 import 'package:frontend/themes/custom_theme.dart';
 import 'package:provider/provider.dart';
-
-import 'mqtt/state/mqtt_app_state.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +22,7 @@ class AppState extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => TrabajadorService()),
         ChangeNotifierProvider(create: (context) => ProductService()),
-        ChangeNotifierProvider(create: (context) => MqttAppConnectionState())
+        ChangeNotifierProvider(create: (context) => MQTTAppState())
       ],
       child: MyApp(),
     );
@@ -50,7 +50,8 @@ class MyApp extends StatelessWidget {
       routes: {
         'home': (_) => const HomeScreen(),
         'worker': (_) => const WorkerScreen(),
-        'formScreen': (_) => const TrabajadorFormScreen()
+        'formScreen': (_) => const TrabajadorFormScreen(),
+        'mqtt': (_) => const MqttViewMessages()
       },
     );
   }

@@ -1,98 +1,115 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/models.dart';
-import 'package:frontend/mqtt/mqtt_manager.dart';
-import 'package:frontend/mqtt/state/mqtt_app_state.dart';
+
 import 'package:frontend/services/services.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreen extends StatelessWidget {
+import '../mqtt/MQTTManager.dart';
+import '../mqtt/state/MQTTAppState.dart';
+
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late MQTTAppState currentAppState;
+  late MQTTManager manager;
+
+  @override
+  void initState() {
+    super.initState();
+    // WidgetsBinding.instance?.addPostFrameCallback((_) {
+    //   manager = MQTTManager(
+    //       host: '192.168.24.208',
+    //       topic: 'test/topic',
+    //       identifier: 'controller',
+    //       state: currentAppState);
+    //   manager.initializeMQTTClient();
+    //   manager.connect();
+    // });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    late MqttManager manager;
     final trabajadorService = Provider.of<TrabajadorService>(context);
-    final mqttService = Provider.of<MqttAppConnectionState>(context);
     final productService = Provider.of<ProductService>(context);
+    final appState = Provider.of<MQTTAppState>(context);
+    currentAppState = appState;
 
     // if (trabajadorService.isLoading) {
     //   return LoadingScreen();
     // }
+
     final size = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('ReadyForId'),
         elevation: 0,
         actions: [
           IconButton(
-              onPressed: () {
-                if (mqttService.appConnectionState ==
-                    AppConnectionState.disconnected) {
-                  manager = MqttManager(
-                      host: 'broker.emqx.io',
-                      topic: 'test/topic/mensaje',
-                      id: 'android',
-                      state: mqttService);
-                  manager.initializeMqttClient();
+              onPressed: () async {
+                if (currentAppState.getAppConnectionState ==
+                    MQTTAppConnectionState.disconnected) {
+                  manager = MQTTManager(
+                      host: '192.168.24.208',
+                      topic: 'test/topic5',
+                      id: 'controller2312',
+                      state: currentAppState);
+                  manager.initializeMQTTClient();
                   manager.connect();
                 }
-                if (mqttService.appConnectionState ==
-                    AppConnectionState.connected) {
-                  manager.publish('hola de nuevo');
+                if (currentAppState.getAppConnectionState ==
+                    MQTTAppConnectionState.connected) {
+                  manager.publish('desde el boton otra vez');
+                  // manager.disconnect();
                 }
               },
-              icon: const Icon(Icons.rss_feed))
+              icon: Icon(
+                Icons.rss_feed,
+                color: currentAppState.getAppConnectionState ==
+                        MQTTAppConnectionState.disconnected
+                    ? Colors.red
+                    : Colors.green,
+              )),
+          IconButton(
+              onPressed: () {
+                Navigator.pushNamed(context, 'mqtt');
+              },
+              icon: const Icon(Icons.abc))
         ],
       ),
-      body: Column(
-        children: [
-          _buildConnectionStateText(
-              _prepareStateMessageFrom(mqttService.appConnectionState)),
-          Center(
-            child: SizedBox(
-                height: double.infinity,
-                width: double.infinity,
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  itemBuilder: (BuildContext context, int index) {
-                    // socketService.socket.on('operario_on', (value) {
-                    //   print(value);
-                    //   for (var trabajador in trabajadorService.trabajadores) {
-                    //     if (trabajador.rfidTag == value.toString()) {
-                    //       trabajador.trabajando = true;
-                    //       // trabajadorService.updateState();
-                    //       trabajadorService.saveOrCreateTrabajador(trabajador);
-                    //     }
-                    //   }
-                    // });
-                    // socketService.socket.on('operario_off', (value) {
-                    //   print(value);
-                    //   for (var trabajador in trabajadorService.trabajadores) {
-                    //     if (trabajador.rfidTag == value.toString()) {
-                    //       trabajador.trabajando = false;
-                    //       // trabajadorService.updateState();
-                    //       trabajadorService.saveOrCreateTrabajador(trabajador);
-                    //     }
-                    //   }
-                    // });
-                    return GestureDetector(
-                      child: _CustomContainer(
-                        trabajador: trabajadorService.trabajadores[index],
-                        trabajadorService: trabajadorService,
-                      ),
-                      onTap: () {
-                        trabajadorService.trabajadorSeleccionado =
-                            trabajadorService.trabajadores[index].copy();
-                        Navigator.pushNamed(context, 'worker');
-                      },
-                    );
+      body: Center(
+        child: SizedBox(
+            height: double.infinity,
+            width: double.infinity,
+            child: GridView.builder(
+              shrinkWrap: true,
+              itemBuilder: (BuildContext context, int index) {
+                return GestureDetector(
+                  child: _CustomContainer(
+                    trabajador: trabajadorService.trabajadores[index],
+                    trabajadorService: trabajadorService,
+                  ),
+                  onTap: () {
+                    trabajadorService.trabajadorSeleccionado =
+                        trabajadorService.trabajadores[index].copy();
+                    Navigator.pushNamed(context, 'worker');
                   },
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4),
-                  itemCount: trabajadorService.trabajadores.length,
-                )),
-          ),
-        ],
+                );
+              },
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4),
+              itemCount: trabajadorService.trabajadores.length,
+            )),
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(
@@ -233,17 +250,6 @@ Widget _buildConnectionStateText(String status) {
       ),
     ],
   );
-}
-
-String _prepareStateMessageFrom(AppConnectionState state) {
-  switch (state) {
-    case AppConnectionState.connected:
-      return 'Connected';
-    case AppConnectionState.connecting:
-      return 'Connecting';
-    case AppConnectionState.disconnected:
-      return 'Disconnected';
-  }
 }
 
 BoxDecoration _cardBorders() =>
