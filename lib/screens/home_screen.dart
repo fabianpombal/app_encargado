@@ -15,7 +15,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late MQTTAppState currentAppState;
   late MQTTManager manager;
 
   @override
@@ -42,7 +41,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final trabajadorService = Provider.of<TrabajadorService>(context);
     final productService = Provider.of<ProductService>(context);
     final appState = Provider.of<MQTTAppState>(context);
-    currentAppState = appState;
 
     // if (trabajadorService.isLoading) {
     //   return LoadingScreen();
@@ -57,25 +55,29 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
               onPressed: () async {
-                if (currentAppState.getAppConnectionState ==
+                if (appState.getAppConnectionState ==
                     MQTTAppConnectionState.disconnected) {
                   manager = MQTTManager(
-                      host: '192.168.24.208',
-                      topic: 'test/topic5',
+                      host: '192.168.1.38',
+                      topic: 'prueba/mosquitto',
                       id: 'controller2312',
-                      state: currentAppState);
+                      state: appState);
                   manager.initializeMQTTClient();
                   manager.connect();
+                  // currentAppState.setManager(manager);
+                  // currentAppState.get.initializeMQTTClient();
+                  // currentAppState.connectManager();
                 }
-                if (currentAppState.getAppConnectionState ==
+                if (appState.getAppConnectionState ==
                     MQTTAppConnectionState.connected) {
-                  manager.publish('desde el boton otra vez');
+                  manager.publish('desde el boton otra vez', null);
+                  // currentAppState.publish('hola que tal desde el provider');
                   // manager.disconnect();
                 }
               },
               icon: Icon(
                 Icons.rss_feed,
-                color: currentAppState.getAppConnectionState ==
+                color: appState.getAppConnectionState ==
                         MQTTAppConnectionState.disconnected
                     ? Colors.red
                     : Colors.green,

@@ -48,7 +48,6 @@ class MQTTManager {
   // Connect to the host
   // ignore: avoid_void_async
   void connect() async {
-    assert(_client != null);
     try {
       print('EXAMPLE::Mosquitto start client connecting....');
       state.setAppConnectionState(MQTTAppConnectionState.connecting);
@@ -64,10 +63,14 @@ class MQTTManager {
     _client!.disconnect();
   }
 
-  void publish(String message) {
+  void publish(String message, String? topicFun) {
     final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
     builder.addString(message);
-    _client!.publishMessage(topic, MqttQos.exactlyOnce, builder.payload!);
+    if (topicFun == null) {
+      _client!.publishMessage(topic, MqttQos.exactlyOnce, builder.payload!);
+    } else {
+      _client!.publishMessage(topicFun, MqttQos.exactlyOnce, builder.payload!);
+    }
   }
 
   /// The subscribed callback
@@ -98,7 +101,7 @@ class MQTTManager {
       // final MqttPublishMessage recMess = c![0].payload;
       final String pt =
           MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
-      state.setReceivedText(pt);
+      state.setReceivedText(pt, c[0].topic);
       print(
           'EXAMPLE::Change notification:: topic is <${c[0].topic}>, payload is <-- $pt -->');
       print('');

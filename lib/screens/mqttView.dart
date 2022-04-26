@@ -15,8 +15,24 @@ class _MqttViewMessagesState extends State<MqttViewMessages> {
   Widget build(BuildContext context) {
     final appState = Provider.of<MQTTAppState>(context);
 
-    return Container(
-      child: const Center(child: Text('Contenido')),
+    return Scaffold(
+      body: SizedBox(
+        height: double.infinity,
+        width: double.infinity,
+        child: Center(
+            child: ListView.separated(
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Text(
+                  "topic: ${appState.getHistorial.keys.elementAt(index)}, mensaje:  ${appState.getHistorial.values.elementAt(index)}"),
+            );
+          },
+          itemCount: appState.getHistorial.values.length,
+          separatorBuilder: (BuildContext context, int index) => const Divider(
+            color: Colors.black26,
+          ),
+        )),
+      ),
     );
   }
 }
