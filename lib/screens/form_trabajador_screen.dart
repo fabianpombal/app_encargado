@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -52,11 +51,12 @@ class _FormScreenState extends State<_FormScreen> {
   @override
   Widget build(BuildContext context) {
     final trabajadorForm = Provider.of<TrabajadorFormProvider>(context);
-    widget.trabajadorService.trabajadorSeleccionado =
-        new Trabajador(color: '', name: '', trabajando: false, rfidTag: "");
+
+    widget.trabajadorService.trabajadorSeleccionado = Trabajador(
+        color: '', name: '', trabajando: false, rfidTag: "", pedidos: 0);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Nuevo Trabajador"),
+        title: const Text("Nuevo Trabajador"),
       ),
       body: Center(
           child: Form(
@@ -69,7 +69,7 @@ class _FormScreenState extends State<_FormScreen> {
                 height: 20,
               ),
               TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     hintText: 'Fulanito de Tal', labelText: 'Nombre'),
                 onChanged: (value) {
                   trabajadorForm.trabajador.name = value;
@@ -80,7 +80,7 @@ class _FormScreenState extends State<_FormScreen> {
               ),
               TextFormField(
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     hintText: '89712932', labelText: 'Tag RFID'),
                 onChanged: (value) {
                   trabajadorForm.trabajador.rfidTag = value;
@@ -90,20 +90,25 @@ class _FormScreenState extends State<_FormScreen> {
                 height: 20,
               ),
               BlockPicker(
-                pickerColor: Colors.red,
+                pickerColor: widget.trabajadorService.color1,
                 onColorChanged: (color) {
                   print("R:${color.red}, G: ${color.green}, B: ${color.blue}");
+                  // if (color == widget.trabajadorService.color1) {
+                  //   print("LOS COLORES SON IGUALES");
+                  // }
                   trabajadorForm.trabajador.color =
                       "${color.red},${color.green},${color.blue}";
                   return;
                 },
                 availableColors: [
-                  Colors.red,
-                  Colors.green,
-                  Colors.black,
-                  Colors.blue,
-                  Colors.indigo,
-                  Colors.teal
+                  widget.trabajadorService.color1,
+                  widget.trabajadorService.color2,
+                  widget.trabajadorService.color3,
+                  widget.trabajadorService.color4,
+                  widget.trabajadorService.color5,
+                  widget.trabajadorService.color6,
+                  widget.trabajadorService.color7,
+                  widget.trabajadorService.color8
                 ],
               ),
               MaterialButton(
@@ -115,7 +120,7 @@ class _FormScreenState extends State<_FormScreen> {
                     pickedFile = res.files.first;
                   });
                 },
-                child: Text(
+                child: const Text(
                   'Seleccionar foto',
                   style: TextStyle(color: Colors.white),
                 ),
@@ -124,11 +129,11 @@ class _FormScreenState extends State<_FormScreen> {
               const SizedBox(
                 height: 20,
               ),
-              Container(
+              SizedBox(
                 width: double.infinity,
                 height: 400,
                 child: pickedFile == null
-                    ? Text('No image yet')
+                    ? const Text('No image yet')
                     : Image.file(
                         File(pickedFile!.path!),
                         width: double.infinity,
@@ -158,7 +163,7 @@ class _FormScreenState extends State<_FormScreen> {
                   Navigator.pop(context);
                 },
                 color: Colors.indigo,
-                child: Text(
+                child: const Text(
                   'Enviar',
                   style: TextStyle(color: Colors.white),
                 ),

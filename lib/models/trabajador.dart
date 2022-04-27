@@ -6,11 +6,13 @@ class Trabajador {
       required this.name,
       required this.trabajando,
       required this.rfidTag,
+      required this.pedidos,
       this.picture,
       this.id});
 
   String color;
   String name;
+  int pedidos;
   bool trabajando;
   String rfidTag;
   String? picture;
@@ -22,25 +24,27 @@ class Trabajador {
   String toJson() => json.encode(toMap());
 
   factory Trabajador.fromMap(Map<String, dynamic> json) => Trabajador(
-        color: json["color"],
-        name: json["name"],
-        picture: json["picture"],
-        trabajando: json["trabajando"],
-        rfidTag: json["rfidTag"],
-      );
+      color: json["color"],
+      name: json["name"],
+      picture: json["picture"],
+      trabajando: json["trabajando"],
+      rfidTag: json["rfidTag"],
+      pedidos: json["pedidos"]);
 
   Map<String, dynamic> toMap() => {
         "color": color,
         "name": name,
         "trabajando": trabajando,
         "picture": picture,
-        "rfidTag": rfidTag
+        "rfidTag": rfidTag,
+        "pedidos": pedidos
       };
 
   Trabajador copy() => Trabajador(
-      color: this.color,
-      name: this.name,
-      trabajando: this.trabajando,
-      id: this.id,
-      rfidTag: this.rfidTag);
+      color: color,
+      name: name,
+      trabajando: trabajando,
+      id: id,
+      pedidos: pedidos,
+      rfidTag: rfidTag);
 }

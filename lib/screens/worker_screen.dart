@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/models/models.dart';
 import 'package:frontend/services/services.dart';
 import 'package:frontend/widgets/product_card.dart';
 import 'package:provider/provider.dart';
@@ -13,9 +14,9 @@ class WorkerScreen extends StatelessWidget {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (context) => ProductService()),
-          ChangeNotifierProvider(
-              create: (context) =>
-                  PedidosService(trabajadorServ.trabajadorSeleccionado.rfidTag))
+          // ChangeNotifierProvider(
+          //     create: (context) =>
+          //         PedidosService(trabajadorServ.trabajadorSeleccionado.rfidTag))
         ],
         child: _PantallaPedidos(
           trabajadorServ: trabajadorServ,
@@ -35,6 +36,16 @@ class _PantallaPedidos extends StatelessWidget {
   Widget build(BuildContext context) {
     final prodServ = Provider.of<ProductService>(context);
     final pedidoServ = Provider.of<PedidosService>(context);
+    List<Pedido> pedidos = [];
+    print("ALL PEDIDOS:::${pedidoServ.allPedidos}");
+
+    for (var pedido in pedidoServ.allPedidos) {
+      if (trabajadorServ.trabajadorSeleccionado.rfidTag ==
+          pedido.trabajadorId) {
+        pedidos.add(pedido);
+      }
+    }
+    print(pedidos);
 
     int R = 0;
     int G = 0;
@@ -57,12 +68,11 @@ class _PantallaPedidos extends StatelessWidget {
           itemBuilder: (BuildContext context, int index) {
             return GestureDetector(
               child: ProductCard(
-                productosPedido: pedidoServ.pedidosActivos[index].id!,
-                status: pedidoServ.pedidosActivos[index].completed,
+                productosPedido: pedidos[index].id!,
+                status: pedidos[index].completed,
               ),
               onTap: () {
-                List<String> prods =
-                    pedidoServ.pedidosActivos[index].productos.split(",");
+                List<String> prods = pedidos[index].productos.split(",");
                 showDialog(
                     builder: (BuildContext context) {
                       return Center(
@@ -121,7 +131,7 @@ class _PantallaPedidos extends StatelessWidget {
               },
             );
           },
-          itemCount: pedidoServ.pedidosActivos.length,
+          itemCount: pedidos.length,
         ),
       ),
       floatingActionButton: FloatingActionButton(

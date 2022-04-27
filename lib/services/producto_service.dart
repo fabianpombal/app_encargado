@@ -11,7 +11,7 @@ class ProductService extends ChangeNotifier {
   bool isLoading = true;
 
   ProductService() {
-    this.loadProducts();
+    loadProducts();
   }
 
   Future<List<Producto>> loadProducts() async {
@@ -25,19 +25,19 @@ class ProductService extends ChangeNotifier {
     productsMap.forEach((key, value) {
       final tempProduct = Producto.fromMap(value);
       tempProduct.id = key;
-      this.products.add(tempProduct);
+      products.add(tempProduct);
     });
-    print(this.products);
+    print(products);
     isLoading = false;
     notifyListeners();
 
-    return this.products;
+    return products;
   }
 
   Producto? listarPorId(String id) {
     Producto? productoFun;
-    this.products.forEach((e) {
-      if (e.id == id) {
+    products.forEach((e) {
+      if (e.rfidTag == id) {
         productoFun = e;
       }
     });

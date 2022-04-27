@@ -40,11 +40,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final trabajadorService = Provider.of<TrabajadorService>(context);
     final productService = Provider.of<ProductService>(context);
+    final pedidos = Provider.of<PedidosService>(context);
     final appState = Provider.of<MQTTAppState>(context);
-
-    // if (trabajadorService.isLoading) {
-    //   return LoadingScreen();
-    // }
 
     final size = MediaQuery.of(context).size;
 
@@ -54,25 +51,19 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         actions: [
           IconButton(
-              onPressed: () async {
+              onPressed: () {
                 if (appState.getAppConnectionState ==
                     MQTTAppConnectionState.disconnected) {
                   manager = MQTTManager(
                       host: '192.168.1.38',
                       topic: 'prueba/mosquitto',
                       id: 'controller2312',
-                      state: appState);
+                      state: appState,
+                      pedidoService: pedidos,
+                      productService: productService,
+                      trabajadorService: trabajadorService);
                   manager.initializeMQTTClient();
                   manager.connect();
-                  // currentAppState.setManager(manager);
-                  // currentAppState.get.initializeMQTTClient();
-                  // currentAppState.connectManager();
-                }
-                if (appState.getAppConnectionState ==
-                    MQTTAppConnectionState.connected) {
-                  manager.publish('desde el boton otra vez', null);
-                  // currentAppState.publish('hola que tal desde el provider');
-                  // manager.disconnect();
                 }
               },
               icon: Icon(
@@ -127,6 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
               name: '',
               trabajando: false,
               id: null,
+              pedidos: 0,
               rfidTag: "",
               picture: "");
           Navigator.pushNamed(context, 'formScreen');

@@ -22,7 +22,8 @@ class AppState extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => TrabajadorService()),
         ChangeNotifierProvider(create: (context) => ProductService()),
-        ChangeNotifierProvider(create: (context) => MQTTAppState())
+        ChangeNotifierProvider(create: (context) => MQTTAppState()),
+        ChangeNotifierProvider(create: (context) => PedidosService())
       ],
       child: MyApp(),
     );
