@@ -140,9 +140,7 @@ class MQTTManager {
       } else if (c[0].topic == 'producto_leido') {
         final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
         final List<String> prodTrabajador = pt.split(',');
-        for (var element in prodTrabajador) {
-          // print(element);
-        }
+
         Color? colorTrabajador;
 
         for (var trabajador in trabajadorService!.trabajadores) {
@@ -210,6 +208,29 @@ class MQTTManager {
           // print(Producto.fromJson(pt).toJson());
           listaProductos.add(Producto.fromJson(pt));
           // print("lista de prods: ${listaProductos.length}");
+        }
+      } else if (c[0].topic == 'pedir_pedido') {
+        List<String> nombresProds = [];
+        final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
+
+        for (var pedido in pedidoService!.allPedidos) {
+          if (!pedido.completed) {
+            if (pedido.trabajadorId == pt) {
+              List<String> idProds = pedido.productos.split(',');
+              for (var idProducto in idProds) {
+                for (var producto in productService!.products) {
+                  if (producto.rfidTag == idProducto) {
+                    nombresProds.add(producto.name);
+                  }
+                }
+              }
+              nombresProds.add('fin');
+              builder.addString(nombresProds.join(':'));
+
+              _client!.publishMessage(
+                  'pedido_recibido', MqttQos.exactlyOnce, builder.payload!);
+            }
+          }
         }
       }
     });

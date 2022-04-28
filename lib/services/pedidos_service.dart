@@ -34,22 +34,16 @@ class PedidosService extends ChangeNotifier {
   Future<String> createPedido(
       List<Producto> productosFun, String tagTrabajador) async {
     List<String> listaProds = [];
-
     for (var producto in productosFun) {
       listaProds.add(producto.rfidTag);
     }
     pedido.productos = listaProds.join(',');
-
-    final url = Uri.https(_baseUrl, 'pedidos.json');
-
-    print("----- nuevo pedido: ${listaProds.join(',')}");
     pedido.trabajadorId = tagTrabajador;
+    final url = Uri.https(_baseUrl, 'pedidos.json');
     final res = await http.post(url, body: pedido.toJson());
     final decodedData = json.decode(res.body);
     pedido.id = decodedData["name"];
-    print(decodedData);
-    // allPedidos.add(pedido);
-    print("HAY ${allPedidos.length} PEDIDOS EN LA PLATAFORMA");
+    allPedidos.add(pedido);
     notifyListeners();
     return '';
   }

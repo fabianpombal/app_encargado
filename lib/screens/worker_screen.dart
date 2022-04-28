@@ -62,89 +62,114 @@ class _PantallaPedidos extends StatelessWidget {
     G = int.parse(colorAux[1]);
     B = int.parse(colorAux[2]);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(trabajadorServ.trabajadorSeleccionado.name),
-        elevation: 0,
-        backgroundColor: Color.fromRGBO(R, G, B, 1),
-      ),
-      body: Container(
-        child: ListView.builder(
-          itemBuilder: (BuildContext context, int index) {
-            return GestureDetector(
-              child: ProductCard(
-                productosPedido: pedidos[index].id!,
-                status: pedidos[index].completed,
-              ),
-              onTap: () {
-                List<String> prods = pedidos[index].productos.split(",");
-                showDialog(
-                    builder: (BuildContext context) {
-                      return Center(
-                        child: Container(
-                          height: 400,
-                          width: 500,
-                          color: Colors.white,
-                          child: ListView.builder(
-                            itemBuilder: (BuildContext context, int index) {
-                              return Padding(
-                                padding: const EdgeInsets.all(15.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Producto ${index + 1}",
-                                      style: const TextStyle(
-                                          color: Colors.red,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      " - Nombre: ${prodServ.listarPorId(prods[index])!.name}",
-                                      style: const TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      "Estante: ${prodServ.listarPorId(prods[index])!.columna.toString()}",
-                                      style: const TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                    Text(
-                                        "Balda: ${prodServ.listarPorId(prods[index])!.fila.toString()}",
-                                        style: const TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.normal)),
-                                    Text(
-                                        "Tag RFID: ${prodServ.listarPorId(prods[index])!.rfidTag}",
-                                        style: const TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.normal)),
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                            itemCount: prods.length,
-                          ),
-                        ),
-                      );
-                    },
-                    context: context);
-              },
-            );
-          },
-          itemCount: pedidos.length,
+    if (pedidoServ.isLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(trabajadorServ.trabajadorSeleccionado.name),
+          elevation: 0,
+          backgroundColor: Color.fromRGBO(R, G, B, 1),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.message),
-        onPressed: () {
-          print(trabajadorServ.trabajadorSeleccionado.id);
-        },
-      ),
-    );
+        body: Center(
+          child: CircularProgressIndicator(
+            color: Color.fromRGBO(R, G, B, 1),
+          ),
+        ),
+      );
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            trabajadorServ.trabajadorSeleccionado.name,
+            style: const TextStyle(shadows: [
+              Shadow(
+                offset: Offset(2.0, 2.0),
+                blurRadius: 8.0,
+                color: Colors.black26,
+              )
+            ]),
+          ),
+          elevation: 0,
+          backgroundColor: Color.fromRGBO(R, G, B, 1),
+        ),
+        body: Container(
+          child: ListView.builder(
+            itemBuilder: (BuildContext context, int index) {
+              return GestureDetector(
+                child: ProductCard(
+                  productosPedido: pedidos[index].id!,
+                  status: pedidos[index].completed,
+                ),
+                onTap: () {
+                  List<String> prods = pedidos[index].productos.split(",");
+                  showDialog(
+                      builder: (BuildContext context) {
+                        return Center(
+                          child: Container(
+                            height: 400,
+                            width: 500,
+                            color: Colors.white,
+                            child: ListView.builder(
+                              itemBuilder: (BuildContext context, int index) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(15.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Producto ${index + 1}",
+                                        style: const TextStyle(
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        " - Nombre: ${prodServ.listarPorId(prods[index])!.name}",
+                                        style: const TextStyle(
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        "Estante: ${prodServ.listarPorId(prods[index])!.columna.toString()}",
+                                        style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                      Text(
+                                          "Balda: ${prodServ.listarPorId(prods[index])!.fila.toString()}",
+                                          style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal)),
+                                      Text(
+                                          "Tag RFID: ${prodServ.listarPorId(prods[index])!.rfidTag}",
+                                          style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal)),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                              itemCount: prods.length,
+                            ),
+                          ),
+                        );
+                      },
+                      context: context);
+                },
+              );
+            },
+            itemCount: pedidos.length,
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: const Icon(Icons.message),
+          onPressed: () {
+            print(trabajadorServ.trabajadorSeleccionado.id);
+          },
+        ),
+      );
+    }
   }
 }
