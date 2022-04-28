@@ -31,6 +31,17 @@ class PedidosService extends ChangeNotifier {
     //
   }
 
+  Future<String> updatePedido(Pedido pedido) async {
+    final url = Uri.https(_baseUrl, 'pedidos/${pedido.id}.json');
+    final res = await http.put(url, body: pedido.toJson());
+    final decodedData = res.body;
+    //print(decodedData);
+    final index = allPedidos.indexWhere((element) => element.id == pedido.id);
+    allPedidos[index] = pedido;
+    notifyListeners();
+    return pedido.id!;
+  }
+
   Future<String> createPedido(
       List<Producto> productosFun, String tagTrabajador) async {
     List<String> listaProds = [];

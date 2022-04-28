@@ -163,12 +163,6 @@ class _PantallaPedidos extends StatelessWidget {
             itemCount: pedidos.length,
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.message),
-          onPressed: () {
-            print(trabajadorServ.trabajadorSeleccionado.id);
-          },
-        ),
       );
     }
   }

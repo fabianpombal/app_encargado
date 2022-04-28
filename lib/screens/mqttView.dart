@@ -33,6 +33,14 @@ class _MqttViewMessagesState extends State<MqttViewMessages> {
           ),
         )),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        child: const Icon(Icons.arrow_back_outlined),
+        backgroundColor: Colors.indigo,
+        elevation: 0,
+      ),
     );
   }
 }
