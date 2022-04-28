@@ -254,13 +254,10 @@ class MQTTManager {
           // print("lista de prods: ${listaProductos.length}");
         }
       } else if (c[0].topic == 'pedir_pedido') {
-        print("TOPICCCCCC: pedido pedir");
         List<String> nombresProds = [];
         int i = 0;
-        final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
 
         for (var pedido in pedidoService!.allPedidos) {
-          print(i);
           if (pedido.completed) {
             print("pedido $i no completado");
           } else {
@@ -276,14 +273,18 @@ class MQTTManager {
                 }
               }
               nombresProds.add('fin');
+
+              final MqttClientPayloadBuilder builder =
+                  MqttClientPayloadBuilder();
               builder.addString(nombresProds.join(','));
-              // print("NOMBRE PRODS: ${nombresProds.join(',')}");
+              print("NOMBRE PRODS: ${nombresProds.join(',')}");
 
               _client!.publishMessage(
                   'pedido_recibido', MqttQos.exactlyOnce, builder.payload!);
+              i = 1;
             }
           }
-          i++;
+          if (i == 1) break;
         }
       }
     });

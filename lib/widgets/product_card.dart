@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/services/pedidos_service.dart';
-import 'package:frontend/widgets/bubble.dart';
 
 class ProductCard extends StatelessWidget {
   final String productosPedido;
@@ -20,18 +18,16 @@ class ProductCard extends StatelessWidget {
         child: Row(
           children: [
             const SizedBox(
-              width: 20,
-            ),
-            Bubble(status: status),
-            const SizedBox(
               width: 10,
             ),
             Text(
               "ID del pedido: $productosPedido",
               style: TextStyle(
-                  fontSize: 15,
-                  fontStyle: FontStyle.normal,
-                  fontWeight: FontWeight.bold),
+                decoration:
+                    status ? TextDecoration.lineThrough : TextDecoration.none,
+                fontSize: 15,
+                fontStyle: FontStyle.normal,
+              ),
             )
           ],
         ),
