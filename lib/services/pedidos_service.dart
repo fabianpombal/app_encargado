@@ -21,31 +21,49 @@ class PedidosService extends ChangeNotifier {
 
   final List<Pedido> allPedidos = [];
 
-  PedidosService() {
-    loadPedidos();
-    // loadPedidosByWorker(workerId);
+  PedidosService(String? workerId) {
+    if (workerId == null) {
+      loadPedidos();
+    } else {
+      loadPedidosByWorker(workerId);
+    }
+
+    //
   }
 
   Future<String> createPedido(
       List<Producto> productosFun, String tagTrabajador) async {
     List<String> listaProds = [];
-    print(productosFun);
 
     for (var producto in productosFun) {
       listaProds.add(producto.rfidTag);
     }
+    pedido.productos = listaProds.join(',');
 
     final url = Uri.https(_baseUrl, 'pedidos.json');
-    pedido.productos = listaProds.join(',');
+
     print("----- nuevo pedido: ${listaProds.join(',')}");
     pedido.trabajadorId = tagTrabajador;
     final res = await http.post(url, body: pedido.toJson());
     final decodedData = json.decode(res.body);
     pedido.id = decodedData["name"];
     print(decodedData);
-    allPedidos.add(pedido);
+    // allPedidos.add(pedido);
+    print("HAY ${allPedidos.length} PEDIDOS EN LA PLATAFORMA");
     notifyListeners();
     return '';
+  }
+
+  List<Pedido> getPedidosFromWorker(String workerRfidTag) {
+    List<Pedido> ped = [];
+    for (var pedido in allPedidos) {
+      if (pedido.trabajadorId == workerRfidTag) {
+        print("PEDIDO SERV :::: PEDIDO :::: ${pedido.id}");
+        ped.add(pedido);
+      }
+    }
+
+    return ped;
   }
 
   Future<List<Pedido>> loadPedidos() async {

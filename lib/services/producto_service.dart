@@ -21,13 +21,13 @@ class ProductService extends ChangeNotifier {
     final res = await http.get(url);
 
     final Map<String, dynamic> productsMap = json.decode(res.body);
-    print(json.decode(res.body));
+    // print(json.decode(res.body));
     productsMap.forEach((key, value) {
       final tempProduct = Producto.fromMap(value);
       tempProduct.id = key;
       products.add(tempProduct);
     });
-    print(products);
+    // print(products);
     isLoading = false;
     notifyListeners();
 
@@ -36,11 +36,11 @@ class ProductService extends ChangeNotifier {
 
   Producto? listarPorId(String id) {
     Producto? productoFun;
-    products.forEach((e) {
+    for (var e in products) {
       if (e.rfidTag == id) {
         productoFun = e;
       }
-    });
+    }
     return productoFun;
   }
 }

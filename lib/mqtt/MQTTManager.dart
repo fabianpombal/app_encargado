@@ -50,7 +50,7 @@ class MQTTManager {
         .withWillMessage('My Will message')
         .startClean() // Non persistent session for testing
         .withWillQos(MqttQos.atLeastOnce);
-    print('EXAMPLE::Mosquitto client connecting....');
+    // print('EXAMPLE::Mosquitto client connecting....');
     _client!.connectionMessage = connMess;
   }
 
@@ -58,11 +58,11 @@ class MQTTManager {
   // ignore: avoid_void_async
   void connect() async {
     try {
-      print('EXAMPLE::Mosquitto start client connecting....');
+      // print('EXAMPLE::Mosquitto start client connecting....');
       state.setAppConnectionState(MQTTAppConnectionState.connecting);
       await _client!.connect();
-    } on Exception catch (e) {
-      print('EXAMPLE::client exception - $e');
+    } on Exception {
+      // print('EXAMPLE::client exception - $e');
       disconnect();
     }
   }
@@ -84,15 +84,15 @@ class MQTTManager {
 
   /// The subscribed callback
   void onSubscribed(String topic) {
-    print('EXAMPLE::Subscription confirmed for topic $topic');
+    // print('EXAMPLE::Subscription confirmed for topic $topic');
   }
 
   /// The unsolicited disconnect callback
   void onDisconnected() {
-    print('EXAMPLE::OnDisconnected client callback - Client disconnection');
+    // print('EXAMPLE::OnDisconnected client callback - Client disconnection');
     if (_client!.connectionStatus!.returnCode ==
         MqttConnectReturnCode.noneSpecified) {
-      print('EXAMPLE::OnDisconnected callback is solicited, this is correct');
+      // print('EXAMPLE::OnDisconnected callback is solicited, this is correct');
     }
     state.setAppConnectionState(MQTTAppConnectionState.disconnected);
   }
@@ -100,7 +100,7 @@ class MQTTManager {
   /// The successful connect callback
   void onConnected() {
     state.setAppConnectionState(MQTTAppConnectionState.connected);
-    print('EXAMPLE::Mosquitto client connected....');
+    // print('EXAMPLE::Mosquitto client connected....');
     List<Producto> listaProductos = [];
     // _client!.subscribe(topic, MqttQos.atLeastOnce);
     _client!.subscribe('producto_leido', MqttQos.exactlyOnce);
@@ -119,8 +119,8 @@ class MQTTManager {
       if (c[0].topic == 'operario_id') {
         final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
         for (var trabajador in trabajadorService!.trabajadores) {
-          print(
-              "trabajador ID: ${trabajador.rfidTag} -- mensaje recivido: $pt ");
+          // // print(
+          // "trabajador ID: ${trabajador.rfidTag} -- mensaje recivido: $pt ");
           if (trabajador.rfidTag == pt) {
             if (trabajador.trabajando) {
               trabajador.trabajando = false;
@@ -131,8 +131,8 @@ class MQTTManager {
               _client!.publishMessage('operario', MqttQos.exactlyOnce,
                   builder.addString('operario_on').payload!);
             }
-            print(
-                'ACT TRABAJADOR:: topic is <${c[0].topic}>, payload is <-- $pt -->');
+            // print(
+            // 'ACT TRABAJADOR:: topic is <${c[0].topic}>, payload is <-- $pt -->');
 
             trabajadorService!.saveOrCreateTrabajador(trabajador);
           }
@@ -141,7 +141,7 @@ class MQTTManager {
         final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
         final List<String> prodTrabajador = pt.split(',');
         for (var element in prodTrabajador) {
-          print(element);
+          // print(element);
         }
         Color? colorTrabajador;
 
@@ -151,8 +151,8 @@ class MQTTManager {
             int g = int.parse(trabajador.color.split(",")[1]);
             int b = int.parse(trabajador.color.split(",")[2]);
             colorTrabajador = Color.fromRGBO(r, g, b, 1);
-            print(
-                "color trabajador : ${colorTrabajador.toString()} -- COLOR1 : ${trabajadorService?.color1.toString()}");
+            // print(
+            // "color trabajador : ${colorTrabajador.toString()} -- COLOR1 : ${trabajadorService?.color1.toString()}");
           }
         }
 
@@ -207,13 +207,13 @@ class MQTTManager {
           _client!.publishMessage('fin', MqttQos.exactlyOnce, builder.payload!);
           listaProductos.clear();
         } else {
-          print(Producto.fromJson(pt).toJson());
+          // print(Producto.fromJson(pt).toJson());
           listaProductos.add(Producto.fromJson(pt));
-          print("lista de prods: ${listaProductos.length}");
+          // print("lista de prods: ${listaProductos.length}");
         }
       }
     });
-    print(
-        'EXAMPLE::OnConnected client callback - Client connection was sucessful');
+    // print(
+    // 'EXAMPLE::OnConnected client callback - Client connection was sucessful');
   }
 }
