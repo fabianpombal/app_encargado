@@ -173,63 +173,14 @@ class MQTTManager {
           }
         }
       } else if (c[0].topic == 'pedido_leido') {
-        // final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
-
         for (var pedido in pedidoService!.allPedidos) {
-          if (pedido.trabajadorId == pt) {
+          if (pedido.id == pt) {
             if (!pedido.completed) {
               pedido.completed = true;
               pedidoService!.updatePedido(pedido);
             }
           }
         }
-        // final List<String> prodTrabajador = pt.split(',');
-
-        // Color? colorTrabajador;
-
-        // for (var trabajador in trabajadorService!.trabajadores) {
-        //   if (trabajador.rfidTag == prodTrabajador[1]) {
-        //     int r = int.parse(trabajador.color.split(",")[0]);
-        //     int g = int.parse(trabajador.color.split(",")[1]);
-        //     int b = int.parse(trabajador.color.split(",")[2]);
-        //     colorTrabajador = Color.fromRGBO(r, g, b, 1);
-        //     // print(
-        //     // "color trabajador : ${colorTrabajador.toString()} -- COLOR1 : ${trabajadorService?.color1.toString()}");
-        //   }
-        // }
-
-        // for (var producto in productService!.products) {
-        //   if (producto.rfidTag == prodTrabajador[0]) {
-        //     if (colorTrabajador.toString() ==
-        //         trabajadorService?.color1.toString()) {
-        //       builder.addString('${0},${1}');
-        //       print("color trabajador : ${1}");
-        //     } else if (colorTrabajador == trabajadorService!.color2) {
-        //       builder.addString('${0},${2}');
-        //       print("color trabajador : ${2}");
-        //     } else if (colorTrabajador == trabajadorService!.color3) {
-        //       builder.addString('${0},${3}');
-        //       print("color trabajador : ${3}");
-        //     } else if (colorTrabajador == trabajadorService!.color4) {
-        //       builder.addString('${0},${4}');
-        //       print("color trabajador : ${4}");
-        //     } else if (colorTrabajador == trabajadorService!.color5) {
-        //       builder.addString('${0},${5}');
-        //       print("color trabajador : ${5}");
-        //     } else if (colorTrabajador == trabajadorService!.color6) {
-        //       builder.addString('${0},${6}');
-        //       print("color trabajador : ${6}");
-        //     } else if (colorTrabajador == trabajadorService!.color7) {
-        //       builder.addString('${0},${7}');
-        //       print("color trabajador : ${7}");
-        //     } else if (colorTrabajador == trabajadorService!.color8) {
-        //       builder.addString('${0},${8}');
-        //       print("color trabajador : ${8}");
-        //     }
-        //     _client!.publishMessage(
-        //         'leds/productos', MqttQos.exactlyOnce, builder.payload!);
-        //   }
-        // }
       } else if (c[0].topic == 'nuevo_pedido') {
         Trabajador trabajadorSeleccionado = trabajadorService!.trabajadores[0];
         final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
@@ -254,7 +205,7 @@ class MQTTManager {
           // print("lista de prods: ${listaProductos.length}");
         }
       } else if (c[0].topic == 'pedir_pedido') {
-        List<String> nombresProds = [];
+        List<String> infoProds = [];
         int i = 0;
 
         for (var pedido in pedidoService!.allPedidos) {
@@ -263,21 +214,23 @@ class MQTTManager {
           } else {
             print(pedido.trabajadorId);
             if (pedido.trabajadorId == pt) {
-              // print("pedido $i completado $pt");
+              infoProds.add(pedido.id!);
               List<String> idProds = pedido.productos.split(',');
               for (var idProducto in idProds) {
                 for (var producto in productService!.products) {
                   if (producto.rfidTag == idProducto) {
-                    nombresProds.add(producto.name);
+                    infoProds.add(producto.name);
+                    infoProds.add(producto.rfidTag);
                   }
+                  // nombresProds.clear();
                 }
               }
-              nombresProds.add('fin');
+              infoProds.add('fin');
 
               final MqttClientPayloadBuilder builder =
                   MqttClientPayloadBuilder();
-              builder.addString(nombresProds.join(','));
-              print("NOMBRE PRODS: ${nombresProds.join(',')}");
+              builder.addString(infoProds.join(':'));
+              print("INFO PRODS: ${infoProds.join(':')}");
 
               _client!.publishMessage(
                   'pedido_recibido', MqttQos.exactlyOnce, builder.payload!);

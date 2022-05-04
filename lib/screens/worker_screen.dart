@@ -101,6 +101,7 @@ class _PantallaPedidos extends StatelessWidget {
                 ),
                 onTap: () {
                   List<String> prods = pedidos[index].productos.split(",");
+                  print(pedidos[index].productos);
                   showDialog(
                       builder: (BuildContext context) {
                         return Center(
