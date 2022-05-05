@@ -25,7 +25,7 @@ class ProductCard extends StatelessWidget {
               style: TextStyle(
                 decoration:
                     status ? TextDecoration.lineThrough : TextDecoration.none,
-                fontSize: 15,
+                fontSize: 23,
                 fontStyle: FontStyle.normal,
               ),
             )
