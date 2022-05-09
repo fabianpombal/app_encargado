@@ -24,7 +24,9 @@ class _MqttViewMessagesState extends State<MqttViewMessages> {
           itemBuilder: (BuildContext context, int index) {
             return ListTile(
               title: Text(
-                  "topic: ${appState.getHistorial.keys.elementAt(index)}, mensaje:  ${appState.getHistorial.values.elementAt(index)}"),
+                "topic: ${appState.getHistorial.keys.elementAt(index)}, mensaje:  ${appState.getHistorial.values.elementAt(index)}",
+                style: const TextStyle(fontSize: 20),
+              ),
             );
           },
           itemCount: appState.getHistorial.values.length,
